@@ -224,13 +224,14 @@ p, li {
 
 /* green pen stroke effect */
 .correction-wrapper {
-  display: inline;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .strikethrough {
   position: relative;
   color: rgba(255, 255, 255, 0.85);
-  display: inline;
+  display: inline-block;
 }
 
 .strikethrough::after {
@@ -253,7 +254,7 @@ p, li {
 #new-subject {
   color: #7bbf7b;
   margin-left: 0.3ch;
-  display: inline;
+  display: inline-block;
 }
 
 .cursor {
@@ -262,6 +263,18 @@ p, li {
   background-color: #7bbf7b;
   margin-left: 2px;
   animation: blink 0.7s infinite;
+}
+
+/* impact shake for landing */
+@keyframes impactShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px) rotate(-1deg); }
+  50% { transform: translateX(4px) rotate(1deg); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+.impact-effect {
+  animation: impactShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 @keyframes blink {
@@ -327,7 +340,6 @@ p, li {
   filter: drop-shadow(0 0 5px rgba(123, 191, 123, 0.6));
 }
 
-/* tracker container */
 #goblinContainer {
   position: absolute;
   z-index: 10;
@@ -336,19 +348,7 @@ p, li {
   flex-direction: row;
   align-items: center;
   transform: translate(-50%, -50%);
-}
-
-@keyframes youFloat {
-  0%, 100% { transform: rotate(-8deg) translateY(0); }
-  50% { transform: rotate(-8deg) translateY(-2px); }
-}
-
-.pixel-arrow {
-  width: 12px;
-  height: 12px;
-  fill: #7bbf7b;
-  opacity: 0.8;
-  transform: rotate(-15deg);
+  transition: none;
 }
 
 #goblinTracker {
@@ -374,92 +374,75 @@ p, li {
   animation: goblinBob 0.2s infinite;
 }
 
-/* dizzy state */
-.goblin-dizzy {
-  animation: goblinDizzy 0.3s infinite;
+/* falling animation */
+@keyframes goblinFall {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(90deg); }
 }
 
-@keyframes goblinDizzy {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
+.goblin-falling {
+  animation: goblinFall 0.5s ease-in forwards;
 }
 
-.dizzy-stars {
+/* death pose (family guy style) */
+.goblin-death-pose {
+  transform: rotate(90deg);
+}
+
+/* crawling animation */
+.goblin-crawling {
+  animation: crawl 0.3s linear infinite;
+}
+
+@keyframes crawl {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+}
+
+/* bag sprite */
+#bagSprite {
   position: absolute;
   width: 20px;
   height: 20px;
-  top: 0px;
-  left: 59%;
-  transform: translateX(-50%);
+  z-index: 11;
   pointer-events: none;
-  perspective: 50px;
+  display: none;
 }
 
-.dizzy-star {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  background: #fff;
-  box-shadow: 
-    1px 0 0 #fff,
-    -1px 0 0 #fff,
-    0 1px 0 #fff,
-    0 -1px 0 #fff;
-  animation: horizontalOrbit 1s linear infinite;
+#bagSprite svg {
+  width: 100%;
+  height: 100%;
   image-rendering: pixelated;
 }
 
-@keyframes horizontalOrbit {
-  0% { 
-    transform: rotateY(0deg) translateX(7px) rotateY(0deg);
-    opacity: 1;
-    filter: brightness(1);
-  }
-  25% { 
-    transform: rotateY(90deg) translateX(7px) rotateY(-90deg);
-    opacity: 0.9;
-    filter: brightness(0.9);
-  }
-  50% { 
-    transform: rotateY(180deg) translateX(7px) rotateY(-180deg);
-    opacity: 0.3;
-    filter: brightness(0.6);
-  }
-  75% { 
-    transform: rotateY(270deg) translateX(7px) rotateY(-270deg);
-    opacity: 0.9;
-    filter: brightness(0.9);
-  }
-  100% { 
-    transform: rotateY(360deg) translateX(7px) rotateY(-360deg);
-    opacity: 1;
-    filter: brightness(1);
-  }
-}
-
-.dizzy-star:nth-child(2) { animation-delay: -0.3s; }
-.dizzy-star:nth-child(3) { animation-delay: -0.6s; }
-.dizzy-star:nth-child(4) { animation-delay: -0.9s; }
-
-/* x eyes overlay */
-.goblin-x-eyes {
+/* smoke puff */
+.smoke-puff {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  width: 40px;
+  height: 40px;
+  z-index: 12;
   pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
-.goblin-shake {
-  animation: headShake 0.5s ease-in-out;
+.smoke-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #888;
+  opacity: 0.8;
+  image-rendering: pixelated;
 }
 
-@keyframes headShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+@keyframes smokeDissipate {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
 }
 
 .quest-item {
@@ -485,6 +468,98 @@ p, li {
   color: #7bbf7b;
   margin-bottom: 0.25rem;
   font-size: clamp(0.85rem, 2.8vw, 1.05rem);
+  position: relative;
+}
+
+/* Waypoint dots positioned at zig-zag corners/angles */
+/* Item 1: scouting for allies - beginning, moves left */
+.quest-item:nth-child(1) h3 {
+  padding-left: 2.5rem;
+}
+
+.quest-item:nth-child(1) h3::before {
+  content: '';
+  position: absolute;
+  left: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7bbf7b;
+  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
+}
+
+/* Item 2: charting the map - corner, moves right */
+.quest-item:nth-child(2) h3 {
+  padding-right: 2.5rem;
+}
+
+.quest-item:nth-child(2) h3::before {
+  content: '';
+  position: absolute;
+  right: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7bbf7b;
+  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
+}
+
+/* Item 3: levelling up - corner, moves left */
+.quest-item:nth-child(3) h3 {
+  padding-left: 2.5rem;
+}
+
+.quest-item:nth-child(3) h3::before {
+  content: '';
+  position: absolute;
+  left: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7bbf7b;
+  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
+}
+
+/* Item 4: checking stats - corner, moves right */
+.quest-item:nth-child(4) h3 {
+  padding-right: 2.5rem;
+}
+
+.quest-item:nth-child(4) h3::before {
+  content: '';
+  position: absolute;
+  right: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7bbf7b;
+  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
+}
+
+/* Item 5: the final boss - final point, moves left */
+.quest-item:nth-child(5) h3 {
+  padding-left: 2.5rem;
+}
+
+.quest-item:nth-child(5) h3::before {
+  content: '';
+  position: absolute;
+  left: -2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7bbf7b;
+  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
 }
 
 .quest-item .service-tag {
@@ -660,11 +735,16 @@ p, li {
     margin-left: 0 !important;
     margin-right: 0 !important;
     text-align: left !important;
-    padding-left: 3rem !important;
+    padding-left: 4rem !important;
     padding-right: 1.5rem !important;
     margin-bottom: 3rem !important;
     border-left: none !important;
     position: relative;
+  }
+  
+  .quest-item h3::before {
+    left: 1rem !important;
+    right: auto !important;
   }
   
   .quest-item h3 {
@@ -692,7 +772,7 @@ p, li {
 <div class="container">
   <div class="hero">
     <h1>definitely not three goblins in a trenchcoat</h1>
-    <p>yes, hello. this is noah. please ignore the shifting height; nothing to see here. <span class="correction-wrapper"><span id="subject" class="strikethrough">we</span><span id="new-subject"></span></span> run an editorial and creative outfit for authors from a dimly lit, well-guarded workshop in london. with 5+ years of big four publishing experience and counting, i apply industry grit to stress-test your project and ensure it is ready to cause trouble in the market.</p>
+    <p>yes, hello. this is noah. please ignore the shifting height; nothing to see here. <span class="correction-wrapper"><span id="subject" class="strikethrough">we</span><span id="new-subject"></span></span> run an editorial and creative outfit from a dimly lit, well-guarded workshop in london. with 5+ years of big four publishing experience and counting, i apply industry grit to stress-test your project and ensure it is ready to cause trouble in the market.</p>
   </div>
 
   <div class="section crew-section">
@@ -700,7 +780,7 @@ p, li {
     <div class="crew-grid">
       <div class="crew-member">
         <h3>editorial goblin</h3>
-        <p>refines what is already there. character arcs, pacing, structuring and themes to make your story feel right. developmental editing, copyediting, line editing, proofreading.</p>
+        <p>refines what is already there. character arcs, pacing, structure and themes to make your story <em>feel</em> right. developmental editing, copyediting, line editing, proofreading.</p>
       </div>
       <div class="crew-member">
         <h3>creative goblin</h3>
@@ -708,7 +788,7 @@ p, li {
       </div>
       <div class="crew-member">
         <h3>marketing goblin</h3>
-        <p>shouts about what will turn heads. brand identity, copywriting, pitches, positioning. one-liners that hit like a well-aimed goblin brick.</p>
+        <p>shouts about what is going to grab attention. brand identity, copywriting, pitches, positioning. one-liners that hit like a well-aimed goblin brick.</p>
       </div>
     </div>
   </div>
@@ -720,7 +800,7 @@ p, li {
       • graphic novels and comic books<br>
       • video games: character, narrative design, dialogue, environmental storytelling<br>
       • lore: technical and worldbuilding guides for board and card games<br>
-      • other creative projects that can't fit into a neat list of bulletpoints</p>
+      • creative projects that can't fit into a neat list of bulletpoints</p>
     </div>
     
     <div class="genre-avoid">
@@ -841,36 +921,83 @@ p, li {
             <path fill="#7bbf7b" d="M9 11h1v1H9z"/>
             <path fill="#7bbf7b" d="M9 12h1v1H9z"/>
           </svg>
+          
+          <!-- goblin without bag (for when bag is dropped) -->
+          <svg id="goblinNoBag" viewBox="0 0 16 16" shape-rendering="crispEdges" style="display:none;">
+            <!-- head -->
+            <path fill="#7bbf7b" d="M6 1h5v1H6z"/>
+            <path fill="#7bbf7b" d="M5 2h6v1H5z"/>
+            <path fill="#7bbf7b" d="M5 3h7v2H5z"/>
+            
+            <!-- ear -->
+            <path fill="#7bbf7b" d="M3 3h2v2H3z"/>
+            <path fill="#5a9d5a" d="M3 4h1v1H3z"/>
+            
+            <!-- eyes -->
+            <path fill="#000" d="M7 3h1v1H7zM10 3h1v1h-1z"/>
+            
+            <!-- nose/mouth -->
+            <path fill="#5a9d5a" d="M9 4h2v1H9z"/>
+            
+            <!-- body (no backpack) -->
+            <path fill="#7bbf7b" d="M5 5h6v1H5z"/>
+            <path fill="#7bbf7b" d="M5 6h6v4H5z"/>
+            <path fill="#5a9d5a" d="M6 7h4v1H6z"/>
+            
+            <!-- arms -->
+            <path fill="#7bbf7b" d="M4 7h2v2H4z"/>
+            <path fill="#7bbf7b" d="M11 6h1v2h-1z"/>
+            
+            <!-- legs -->
+            <path fill="#7bbf7b" d="M6 10h2v1H6z"/>
+            <path fill="#7bbf7b" d="M6 11h1v1H6z"/>
+            <path fill="#7bbf7b" d="M6 12h1v1H6z"/>
+            <path fill="#7bbf7b" d="M9 10h2v1H9z"/>
+            <path fill="#7bbf7b" d="M9 11h1v1H9z"/>
+            <path fill="#7bbf7b" d="M9 12h1v1H9z"/>
+          </svg>
         </div>
+      </div>
+      
+      <!-- Bag sprite -->
+      <div id="bagSprite">
+        <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <!-- Main sack body -->
+          <path fill="#8B4513" d="M4 6h8v7H4z"/>
+          <!-- Texture bands -->
+          <path fill="#654321" d="M4 7h8v1H4zM4 11h8v1H4z"/>
+          <!-- Loosened trailing strap -->
+          <path fill="#654321" d="M3 6h1v1H3zM1 5h2v1H1zM0 4h1v1H0z"/>
+        </svg>
       </div>
 
       <div class="quest-item">
         <h3>scouting for allies</h3>
-        <span class="service-tag">[vibe check]</span>
+        <span class="service-tag">vibe check</span>
         <p>no gold required. you'll get to meet all three goblins. we're a delight, obviously. let's talk plot, world-building, magic system design or the scenes that keep you awake.</p>
       </div>
       
       <div class="quest-item">
         <h3>charting the map</h3>
-        <span class="service-tag">[creative development]</span>
-        <p>you're at the ideas and brainstorming stage. the fun part before the real pain begins. so many possibilities. you're building the world, crafting the characters, deciding on the stakes and even designing an inventive and memorable magic system. the creative goblin LOVES this stuff and will help you identify the ideas worth chasing.</p>
+        <span class="service-tag">creative development</span>
+        <p>you're at the ideas and brainstorming stage. this is the fun part before the real pain begins. so many possibilities. you're building the world, crafting the characters, deciding on the stakes and even designing an inventive and memorable magic system. the creative goblin LOVES this stuff and will help you identify the ideas worth chasing.</p>
       </div>
       
       <div class="quest-item">
         <h3>levelling up</h3>
-        <span class="service-tag">[editorial development]</span>
+        <span class="service-tag">editorial development</span>
         <p>you're writing... and writing... and writing. this is where many give up. but not you. the editorial goblin will provide you with an editorial letter detailing what works, what doesn't (and why) and a comprehensive action plan to get your manuscript through to the other side.</p>
       </div>
       
       <div class="quest-item">
         <h3>checking stats</h3>
-        <span class="service-tag">[manuscript assessment]</span>
+        <span class="service-tag">manuscript assessment</span>
         <p>your draft is complete. finally. you need an honest read with a focus on the current market and an understanding of what publishers - and therefore, agents - are looking for.</p>
       </div>
       
       <div class="quest-item">
-        <h3>ready for the final boss</h3>
-        <span class="service-tag">[pitching and querying]</span>
+        <h3>the final boss</h3>
+        <span class="service-tag">pitching and querying</span>
         <p>your project is ready. exciting. but are you? what's the one-liner? what are your comps? the marketing goblin helps you nail the query package so you don't fall flat at the gates.</p>
       </div>
     </div>
@@ -880,13 +1007,13 @@ p, li {
     </div>
     
     <div class="quest-pricing">
-      we quote based on project length and complexity. let's start with a free vibe check and we can settle on a gold payment that works for you and the goblins. creators from underrepresented backgrounds receive a discounted rate.
+      quotes are based on project length and complexity. let's start with a free vibe check and we can settle on a gold payment that works for you and the goblins. creators from lgbtqia+, neurodivergent and underrepresented backgrounds receive a discounted rate.
     </div>
   </div>
 
   <div class="cta">
     <a href="contact.html" class="cta-link">
-      <h2>goblins this way</h2>
+      <h2>ready to see the goblins?</h2>
     </a>
   </div>
 </div>
@@ -916,74 +1043,193 @@ let scrollTimeout;
 let navTimeout;
 let lastNavScrollY = window.pageYOffset;
 
-// dizzy state tracking
+// slip & fall state tracking
 let directionChanges = 0;
 let lastDirection = null;
 let directionTimer = null;
-let isDizzy = false;
+let isFalling = false;
+let isRecovering = false;
 
-function triggerDizzyState() {
-  isDizzy = true;
+// goblin state
+let goblinState = {
+  hasBag: true,
+  currentWaypoint: 0,
+  bagPosition: null,
+  targetWaypoint: null,
+  fallStartPosition: null
+};
+
+function createSmokePuff(x, y) {
+  const smoke = document.createElement('div');
+  smoke.className = 'smoke-puff';
+  smoke.style.left = x + 'px';
+  smoke.style.top = y + 'px';
+  
+  // create pixelated smoke particles
+  for (let i = 0; i < 16; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'smoke-particle';
+    
+    const angle = (i / 16) * Math.PI * 2;
+    const distance = 10 + Math.random() * 10;
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+    
+    particle.style.left = (20 + offsetX) + 'px';
+    particle.style.top = (20 + offsetY) + 'px';
+    particle.style.animation = `smokeDissipate ${0.4 + Math.random() * 0.2}s ease-out forwards`;
+    
+    smoke.appendChild(particle);
+  }
+  
+  document.getElementById('questMap').appendChild(smoke);
+  
+  setTimeout(() => smoke.remove(), 600);
+}
+
+function getNearestWaypoint(currentY, waypointPositions) {
+  let nearestIndex = 0;
+  let minDistance = Math.abs(currentY - waypointPositions[0].y);
+  
+  waypointPositions.forEach((pos, index) => {
+    const distance = Math.abs(currentY - pos.y);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestIndex = index;
+    }
+  });
+  
+  return nearestIndex;
+}
+
+function calculateWaypoints() {
+  const items = document.querySelectorAll('.quest-item');
+  const mapRect = document.getElementById('questMap').getBoundingClientRect();
+  const isMobile = window.innerWidth < 600;
+  
+  return Array.from(items).map((item, i) => {
+    const h3 = item.querySelector('h3');
+    const rect = h3.getBoundingClientRect();
+    
+    if (isMobile) {
+      return {
+        x: 15,
+        y: rect.top - mapRect.top + (rect.height / 2),
+        element: h3
+      };
+    }
+    
+    const x = (i % 2 === 0) 
+      ? rect.left - mapRect.left - 40  // Left corner
+      : rect.right - mapRect.left + 40; // Right corner
+    return { x, y: rect.top - mapRect.top + (rect.height / 2), element: h3 };
+  });
+}
+
+function handleFall() {
+  if (isFalling) return;
+  isFalling = true;
+  
   const container = document.getElementById('goblinContainer');
-  const tracker = document.getElementById('goblinTracker');
   const goblinRight = document.getElementById('goblinRight');
   const goblinLeft = document.getElementById('goblinLeft');
+  const goblinNoBag = document.getElementById('goblinNoBag');
+  const bag = document.getElementById('bagSprite');
+  const rect = container.getBoundingClientRect();
+  const mapRect = document.getElementById('questMap').getBoundingClientRect();
+
+  // Hide normal sprites, show no-bag version
+  goblinRight.style.display = 'none';
+  goblinLeft.style.display = 'none';
+  goblinNoBag.style.display = 'block';
   
-  // add dizzy class
-  tracker.classList.remove('goblin-walking');
-  tracker.classList.add('goblin-dizzy');
+  // Show bag at current position
+  bag.style.display = 'block';
+  bag.style.position = 'absolute';
+  bag.style.left = (rect.left - mapRect.left) + 'px';
+  bag.style.top = (rect.top - mapRect.top) + 'px';
+
+  // Heavy fall animation - straight down past entire screen
+  container.animate([
+    { transform: 'translate(-50%, -50%) rotate(0deg)', offset: 0 },
+    { transform: `translate(-50%, -50%) translateY(${window.innerHeight + 300}px) rotate(120deg)`, offset: 1 }
+  ], {
+    duration: 1200,
+    easing: 'cubic-bezier(0.5, 0, 1, 0.5)',
+    fill: 'forwards'
+  }).onfinish = () => {
+    container.style.opacity = '0';
+    setTimeout(recoverGoblin, 1000);
+  };
   
-  // create x eyes overlay
-  const xEyes = document.createElement('canvas');
-  xEyes.className = 'goblin-x-eyes';
-  xEyes.width = 32;
-  xEyes.height = 32;
-  const ctx = xEyes.getContext('2d');
-  ctx.fillStyle = '#000';
-  // draw x eyes (left eye)
-  ctx.fillRect(8, 10, 2, 2);
-  ctx.fillRect(10, 12, 2, 2);
-  ctx.fillRect(12, 10, 2, 2);
-  ctx.fillRect(10, 8, 2, 2);
-  // draw x eyes (right eye)
-  ctx.fillRect(18, 10, 2, 2);
-  ctx.fillRect(20, 12, 2, 2);
-  ctx.fillRect(22, 10, 2, 2);
-  ctx.fillRect(20, 8, 2, 2);
+  // Bag falls separately
+  bag.animate([
+    { transform: 'translateY(0) rotate(0deg)', offset: 0 },
+    { transform: `translateY(${window.innerHeight + 250}px) rotate(180deg)`, offset: 1 }
+  ], {
+    duration: 1100,
+    easing: 'cubic-bezier(0.5, 0, 1, 0.5)',
+    fill: 'forwards'
+  });
+}
+
+function recoverGoblin() {
+  const container = document.getElementById('goblinContainer');
+  const goblinRight = document.getElementById('goblinRight');
+  const goblinLeft = document.getElementById('goblinLeft');
+  const goblinNoBag = document.getElementById('goblinNoBag');
+  const bag = document.getElementById('bagSprite');
+
+  // Reset state
+  isFalling = false;
+  directionChanges = 0;
   
-  // add x eyes to both sprites
-  if (goblinRight.style.display !== 'none') {
-    goblinRight.appendChild(xEyes);
-  } else {
-    goblinLeft.appendChild(xEyes);
+  // Hide bag and no-bag sprite
+  bag.style.display = 'none';
+  goblinNoBag.style.display = 'none';
+  
+  // Show normal sprite
+  goblinRight.style.display = 'block';
+  goblinLeft.style.display = 'none';
+  
+  // Calculate position on timeline
+  const waypoints = calculateWaypoints();
+  const scrollY = window.pageYOffset;
+  const viewportCenter = scrollY + (window.innerHeight / 2);
+  const mapRect = document.getElementById('questMap').getBoundingClientRect();
+  const relativeY = viewportCenter - (mapRect.top + scrollY);
+  
+  // Find nearest waypoint
+  let nearestIndex = 0;
+  let minDistance = Math.abs(waypoints[0].y - relativeY);
+  
+  waypoints.forEach((wp, i) => {
+    const distance = Math.abs(wp.y - relativeY);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestIndex = i;
+    }
+  });
+  
+  const nearest = waypoints[nearestIndex];
+  
+  // Position goblin at waypoint
+  container.style.left = nearest.x + 'px';
+  container.style.top = nearest.y + 'px';
+  container.style.transform = 'translate(-50%, -50%)';
+  
+  // CRITICAL: Reset display and opacity
+  container.style.display = 'flex';
+  container.style.opacity = '1';
+  
+  // Add impact shake to nearest heading
+  if (nearest && nearest.element) {
+    nearest.element.classList.add('impact-effect');
+    setTimeout(() => nearest.element.classList.remove('impact-effect'), 400);
   }
   
-  // create stars
-  const starsDiv = document.createElement('div');
-  starsDiv.className = 'dizzy-stars';
-  for (let i = 0; i < 4; i++) {
-    const star = document.createElement('div');
-    star.className = 'dizzy-star';
-    starsDiv.appendChild(star);
-  }
-  container.appendChild(starsDiv);
-  
-  // recovery after 6 seconds
-  setTimeout(() => {
-    // remove stars and x eyes
-    starsDiv.remove();
-    xEyes.remove();
-    
-    // shake animation
-    tracker.classList.remove('goblin-dizzy');
-    tracker.classList.add('goblin-shake');
-    
-    setTimeout(() => {
-      tracker.classList.remove('goblin-shake');
-      isDizzy = false;
-      directionChanges = 0;
-    }, 500);
-  }, 6000);
+  // Create smoke puff at recovery position
+  createSmokePuff(nearest.x, nearest.y);
 }
 
 function updateQuestVisuals() {
@@ -999,8 +1245,8 @@ function updateQuestVisuals() {
   const mapRect = map.getBoundingClientRect();
   const currentScrollY = window.pageYOffset;
   
-  // track direction changes for dizzy state
-  if (!isDizzy) {
+  // track direction changes for fall trigger
+  if (!isFalling && !isRecovering) {
     const currentDirection = currentScrollY > lastScrollY ? 'down' : 'up';
     
     if (currentDirection !== lastDirection && lastDirection !== null) {
@@ -1010,7 +1256,7 @@ function updateQuestVisuals() {
       directionTimer = setTimeout(() => { directionChanges = 0; }, 500);
       
       if (directionChanges > 10) {
-        triggerDizzyState();
+        handleFall();
       }
     }
     lastDirection = currentDirection;
@@ -1018,21 +1264,9 @@ function updateQuestVisuals() {
   
   let points = [];
   
-  items.forEach((item, index) => {
-    const h3 = item.querySelector('h3');
-    const rect = h3.getBoundingClientRect();
-    
-    if (isMobile) {
-      // mobile: straight vertical line down the left
-      const x = 15;
-      const y = rect.top - mapRect.top + (rect.height / 2);
-      points.push({x, y});
-    } else {
-      // desktop: zigzag layout
-      const x = (index % 2 === 0) ? rect.right - mapRect.left + 14 : rect.left - mapRect.left - 14;
-      const y = rect.top - mapRect.top + 13;
-      points.push({x, y});
-    }
+  const waypoints = calculateWaypoints();
+  waypoints.forEach(wp => {
+    points.push({x: wp.x, y: wp.y});
   });
 
   let d = `M ${points[0].x} ${points[0].y}`;
@@ -1041,21 +1275,8 @@ function updateQuestVisuals() {
   }
   path.setAttribute('d', d);
 
-  // Draw waypoint dots at each corner
-  const svg = document.querySelector('.quest-line-svg');
-  // Remove existing dots
-  svg.querySelectorAll('.waypoint-dot').forEach(dot => dot.remove());
-  
-  // Add dots at each point (including start and end)
-  const dotRadius = 5;
-  points.forEach(point => {
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('class', 'waypoint-dot');
-    circle.setAttribute('cx', point.x);
-    circle.setAttribute('cy', point.y); // No offset - same as line position
-    circle.setAttribute('r', dotRadius);
-    svg.appendChild(circle);
-  });
+  // skip position updates during fall sequence
+  if (isFalling) return;
 
   const windowHeight = window.innerHeight;
   let progress = (windowHeight / 2 - mapRect.top) / mapRect.height;
@@ -1067,34 +1288,41 @@ function updateQuestVisuals() {
   
   container.style.left = `${point.x}px`;
   container.style.top = `${point.y}px`;
+  container.style.display = 'flex';
+  container.style.opacity = '1';
+  container.style.transform = 'translate(-50%, -50%)';
   
-  // get both sprites
+  // get sprites
   const goblinRight = document.getElementById('goblinRight');
   const goblinLeft = document.getElementById('goblinLeft');
+  const goblinNoBag = document.getElementById('goblinNoBag');
   
-  let facingRight;
-  
-  if (isMobile) {
-    // mobile: always face right when going down vertical line
-    facingRight = true;
-  } else {
-    // desktop: predictive orientation - look ahead to next point
-    const scrollingUp = currentScrollY < lastScrollY;
-    const ahead = path.getPointAtLength(Math.min(totalLength, currentDistance + 1));
+  // only show normal sprites if not falling
+  if (!isFalling) {
+    goblinNoBag.style.display = 'none';
     
-    if (scrollingUp) {
-      facingRight = ahead.x < point.x;
+    let facingRight;
+    
+    if (isMobile) {
+      facingRight = true;
     } else {
-      facingRight = ahead.x > point.x;
+      const scrollingUp = currentScrollY < lastScrollY;
+      const ahead = path.getPointAtLength(Math.min(totalLength, currentDistance + 1));
+      
+      if (scrollingUp) {
+        facingRight = ahead.x < point.x;
+      } else {
+        facingRight = ahead.x > point.x;
+      }
     }
-  }
-  
-  if (facingRight) {
-    goblinRight.style.display = 'block';
-    goblinLeft.style.display = 'none';
-  } else {
-    goblinRight.style.display = 'none';
-    goblinLeft.style.display = 'block';
+    
+    if (facingRight) {
+      goblinRight.style.display = 'block';
+      goblinLeft.style.display = 'none';
+    } else {
+      goblinRight.style.display = 'none';
+      goblinLeft.style.display = 'block';
+    }
   }
 
   tracker.classList.add('goblin-walking');
@@ -1111,10 +1339,8 @@ function updateQuestVisuals() {
   clearTimeout(navTimeout);
   
   if (currentScrollY > lastNavScrollY && currentScrollY > 100) {
-    // Scrolling down - hide nav
     nav.classList.add('hidden');
   } else {
-    // Scrolling up - show nav
     nav.classList.remove('hidden');
   }
   
@@ -1140,10 +1366,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const newSubject = document.getElementById('new-subject');
   
   setTimeout(() => {
-    // apply green pen strike to 'we'
     subject.classList.add('active');
     
-    // type 'i' 
     setTimeout(() => {
       newSubject.textContent = 'i';
     }, 400);
