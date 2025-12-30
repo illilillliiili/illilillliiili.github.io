@@ -539,21 +539,13 @@ p, li {
 
 .quest-item {
   position: relative;
-  width: 45%;
+  width: 100%;
+  max-width: 600px;
   margin-bottom: 3rem;
   z-index: 1;
-}
-
-.quest-item:nth-child(odd) {
   align-self: flex-start;
-  text-align: right;
-  padding-right: 1rem;
-}
-
-.quest-item:nth-child(even) {
-  align-self: flex-end;
   text-align: left;
-  padding-left: 1rem;
+  padding-left: 3rem;
 }
 
 .quest-item h3 {
@@ -832,8 +824,6 @@ p, li {
   </div>
 
   <div class="section">
-    <h2 style="margin-bottom: 2rem;">quest outline</h2>
-    
     <div class="quest-map" id="questMap">
       <svg class="quest-line-svg">
         <path class="quest-line-path" id="questPath" d="" />
@@ -1018,19 +1008,19 @@ p, li {
       
       <div class="quest-item">
         <h3>creative development</h3>
-        <p>you're brainstorming. so many possibilities. but before you write one word of your next draft, we make sure you aren't building on a swamp.</p>
+        <p>you're brainstorming. so many possibilities.<br>we make sure you aren't building on a swamp.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
         <h3>editorial development</h3>
-        <p>you're writing ... and writing ... and writing. we provide a comprehensive editorial letter and we work with you to make your project as strong as it can be.</p>
+        <p>drafting. this is the hardest part.<br>we tell you exactly what works. and what doesn't.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
         <h3>pitch feedback</h3>
-        <p>your project is ready. are you? what's the hook? why should people care? we help you nail the package.</p>
+        <p>your project is ready. exciting.<br>we make sure you nail the package.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
     </div>
@@ -1138,17 +1128,16 @@ function getNearestWaypoint(currentY, waypointPositions) {
 function calculateWaypoints() {
   const items = document.querySelectorAll('.quest-item');
   const mapRect = document.getElementById('questMap').getBoundingClientRect();
-  const isMobile = window.innerWidth < 600;
   
-  // Straight vertical line - all waypoints at same X
-  const centerX = isMobile ? 15 : (mapRect.width / 2);
+  // Straight vertical line on left side for both mobile and desktop
+  const leftX = 15;
   
   return Array.from(items).map((item) => {
     const h3 = item.querySelector('h3');
     const rect = h3.getBoundingClientRect();
     
     return {
-      x: centerX,
+      x: leftX,
       y: rect.top - mapRect.top + (rect.height / 2),
       element: h3
     };
@@ -1720,7 +1709,7 @@ function updateQuestVisuals() {
   }
   
   // Create waypoint dots positioned exactly on the vertical line
-  const centerX = isMobile ? 15 : (mapRect.width / 2);
+  const centerX = 15; // Left side for both mobile and desktop
   
   // Remove any existing dots
   document.querySelectorAll('.waypoint-dot').forEach(dot => dot.remove());
