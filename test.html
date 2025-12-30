@@ -196,6 +196,27 @@ h3 {
   font-weight: normal;
 }
 
+.read-more {
+  display: block;
+  color: #7bbf7b;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-family: 'Space Mono', monospace;
+  transition: all 0.2s;
+}
+
+.read-more .arrow {
+  display: inline-block;
+  vertical-align: baseline;
+  position: relative;
+  top: 1px;
+}
+
+.read-more:hover {
+  color: #7bbf7b;
+  text-shadow: 0 0 8px rgba(123, 191, 123, 0.8);
+}
+
 p, li {
   font-size: clamp(0.9rem, 2.8vw, 1rem);
   line-height: 1.9;
@@ -224,11 +245,54 @@ p, li {
 
 /* green pen stroke effect */
 .correction-wrapper {
+  position: relative;
   display: inline-block;
+  width: 1.7em; /* Reduce width to bring "run" closer */
+  height: 1em;
+  vertical-align: baseline;
   white-space: nowrap;
+  top: -4.5px; /* Move up a tiny bit more */
 }
 
 .strikethrough {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+}
+
+/* Animated strikethrough that draws from left to right */
+#subject::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: #7bbf7b;
+  animation: strikethrough 0.4s ease-out 0.5s forwards;
+}
+
+@keyframes strikethrough {
+  to {
+    width: 100%;
+  }
+}
+
+#new-subject {
+  position: absolute;
+  left: 1.3em; /* Closer to "we" */
+  top: 0;
+  display: inline-block;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out 0.9s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
   position: relative;
   color: rgba(255, 255, 255, 0.85);
   display: inline-block;
@@ -265,7 +329,7 @@ p, li {
   animation: blink 0.7s infinite;
 }
 
-/* impact shake for landing */
+/* impact shake for landing - strong for goblin */
 @keyframes impactShake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-4px) rotate(-1deg); }
@@ -275,6 +339,18 @@ p, li {
 }
 .impact-effect {
   animation: impactShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* lighter shake for bag impacts - much smaller object */
+@keyframes impactShakeLight {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-1px) rotate(-0.3deg); }
+  50% { transform: translateX(1px) rotate(0.3deg); }
+  75% { transform: translateX(-0.5px); }
+  100% { transform: translateX(0); }
+}
+.impact-effect-light {
+  animation: impactShakeLight 0.3s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 @keyframes blink {
@@ -402,14 +478,30 @@ p, li {
 /* bag sprite */
 #bagSprite {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   z-index: 11;
   pointer-events: none;
   display: none;
 }
 
 #bagSprite svg {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+#bagStrap {
+  position: absolute;
+  width: 32px;
+  height: 40px;
+  z-index: 10;
+  pointer-events: none;
+  display: none;
+  transform-origin: center center;
+}
+
+#bagStrap svg {
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
@@ -471,95 +563,26 @@ p, li {
   position: relative;
 }
 
-/* Waypoint dots positioned at zig-zag corners/angles */
-/* Item 1: scouting for allies - beginning, moves left */
-.quest-item:nth-child(1) h3 {
-  padding-left: 2.5rem;
+/* Waypoint dots - will be positioned via JavaScript to match line exactly */
+.quest-item h3 {
+  color: #7bbf7b;
+  margin-bottom: 0.25rem;
+  font-size: clamp(0.85rem, 2.8vw, 1.05rem);
+  position: relative;
+  padding-left: 0;
+  padding-right: 0;
 }
 
-.quest-item:nth-child(1) h3::before {
-  content: '';
+.waypoint-dot {
   position: absolute;
-  left: -2.5rem;
-  top: 50%;
-  transform: translateY(-50%);
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: #7bbf7b;
   box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
-}
-
-/* Item 2: charting the map - corner, moves right */
-.quest-item:nth-child(2) h3 {
-  padding-right: 2.5rem;
-}
-
-.quest-item:nth-child(2) h3::before {
-  content: '';
-  position: absolute;
-  right: -2.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #7bbf7b;
-  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
-}
-
-/* Item 3: levelling up - corner, moves left */
-.quest-item:nth-child(3) h3 {
-  padding-left: 2.5rem;
-}
-
-.quest-item:nth-child(3) h3::before {
-  content: '';
-  position: absolute;
-  left: -2.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #7bbf7b;
-  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
-}
-
-/* Item 4: checking stats - corner, moves right */
-.quest-item:nth-child(4) h3 {
-  padding-right: 2.5rem;
-}
-
-.quest-item:nth-child(4) h3::before {
-  content: '';
-  position: absolute;
-  right: -2.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #7bbf7b;
-  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
-}
-
-/* Item 5: the final boss - final point, moves left */
-.quest-item:nth-child(5) h3 {
-  padding-left: 2.5rem;
-}
-
-.quest-item:nth-child(5) h3::before {
-  content: '';
-  position: absolute;
-  left: -2.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #7bbf7b;
-  box-shadow: 0 0 6px rgba(123, 191, 123, 0.6);
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .quest-item .service-tag {
@@ -959,46 +982,67 @@ p, li {
         </div>
       </div>
       
-      <!-- Bag sprite -->
+      <!-- Bag sprite - exact same pixels as backpack on goblin's back -->
       <div id="bagSprite">
         <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
-          <!-- Main sack body -->
-          <path fill="#8B4513" d="M4 6h8v7H4z"/>
-          <!-- Texture bands -->
-          <path fill="#654321" d="M4 7h8v1H4zM4 11h8v1H4z"/>
-          <!-- Loosened trailing strap -->
-          <path fill="#654321" d="M3 6h1v1H3zM1 5h2v1H1zM0 4h1v1H0z"/>
+          <!-- huge circular rounded sack backpack - EXACT pixels from goblinRight -->
+          <path fill="#8B4513" d="M1 5h4v1H1z"/>
+          <path fill="#8B4513" d="M0 6h5v1H0z"/>
+          <path fill="#8B4513" d="M0 7h5v3H0z"/>
+          <path fill="#8B4513" d="M1 10h4v1H1z"/>
+          <!-- sack texture - horizontal fabric bands/folds -->
+          <path fill="#654321" d="M1 6h4v1H1z"/>
+          <path fill="#654321" d="M0 9h5v1H0z"/>
+        </svg>
+      </div>
+      
+      <!-- Bag strap - uses EXACT same pixels as crossbody strap on goblin, extended longer -->
+      <div id="bagStrap">
+        <svg viewBox="0 0 16 20" shape-rendering="crispEdges">
+          <!-- Exact diagonal cross-body strap pixels from goblin sprite -->
+          <path fill="#654321" d="M5 5h1v1H5z"/>
+          <path fill="#654321" d="M6 6h2v1H6z"/>
+          <path fill="#654321" d="M8 7h2v1H8z"/>
+          <path fill="#654321" d="M10 8h1v1h-1z"/>
+          <!-- Extended a few more pixels -->
+          <path fill="#654321" d="M11 9h1v1h-1z"/>
+          <path fill="#654321" d="M12 10h1v1h-1z"/>
         </svg>
       </div>
 
       <div class="quest-item">
-        <h3>scouting for allies</h3>
-        <span class="service-tag">vibe check</span>
+        <h3>vibe check</h3>
+        <span class="service-tag">scouting for allies</span>
         <p>no gold required. you'll get to meet all three goblins. we're a delight, obviously. let's talk plot, world-building, magic system design or the scenes that keep you awake.</p>
+        <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
-        <h3>charting the map</h3>
-        <span class="service-tag">creative development</span>
+        <h3>creative development</h3>
+        <span class="service-tag">charting the map</span>
         <p>you're at the ideas and brainstorming stage. this is the fun part before the real pain begins. so many possibilities. you're building the world, crafting the characters, deciding on the stakes and even designing an inventive and memorable magic system. the creative goblin LOVES this stuff and will help you identify the ideas worth chasing.</p>
+        <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
-        <h3>levelling up</h3>
-        <span class="service-tag">editorial development</span>
+        <h3>editorial development</h3>
+        <span class="service-tag">levelling up</span>
         <p>you're writing... and writing... and writing. this is where many give up. but not you. the editorial goblin will provide you with an editorial letter detailing what works, what doesn't (and why) and a comprehensive action plan to get your manuscript through to the other side.</p>
+        <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
-        <h3>checking stats</h3>
-        <span class="service-tag">manuscript assessment</span>
+        <h3>manuscript assessment</h3>
+        <span class="service-tag">checking stats</span>
         <p>your draft is complete. finally. you need an honest read with a focus on the current market and an understanding of what publishers - and therefore, agents - are looking for.</p>
+        <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
-        <h3>the final boss</h3>
-        <span class="service-tag">pitching and querying</span>
+        <h3>pitching and querying</h3>
+        <span class="service-tag">final boss</span>
         <p>your project is ready. exciting. but are you? what's the one-liner? what are your comps? the marketing goblin helps you nail the query package so you don't fall flat at the gates.</p>
+        <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
     </div>
     
@@ -1107,22 +1151,18 @@ function calculateWaypoints() {
   const mapRect = document.getElementById('questMap').getBoundingClientRect();
   const isMobile = window.innerWidth < 600;
   
-  return Array.from(items).map((item, i) => {
+  // Straight vertical line - all waypoints at same X
+  const centerX = isMobile ? 15 : (mapRect.width / 2);
+  
+  return Array.from(items).map((item) => {
     const h3 = item.querySelector('h3');
     const rect = h3.getBoundingClientRect();
     
-    if (isMobile) {
-      return {
-        x: 15,
-        y: rect.top - mapRect.top + (rect.height / 2),
-        element: h3
-      };
-    }
-    
-    const x = (i % 2 === 0) 
-      ? rect.left - mapRect.left - 40  // Left corner
-      : rect.right - mapRect.left + 40; // Right corner
-    return { x, y: rect.top - mapRect.top + (rect.height / 2), element: h3 };
+    return {
+      x: centerX,
+      y: rect.top - mapRect.top + (rect.height / 2),
+      element: h3
+    };
   });
 }
 
@@ -1179,11 +1219,22 @@ function handleFall() {
   goblinLeft.style.display = 'none';
   goblinNoBag.style.display = 'block';
   
+  // Get goblin's screen position for strap detachment
+  const goblinScreenRect = container.getBoundingClientRect();
+  
   // place bag exactly where he fell
   bag.style.display = 'block';
   bag.style.position = 'absolute';
   bag.style.left = (rect.left - mapRect.left) + 'px';
   bag.style.top = (rect.top - mapRect.top) + 'px';
+  
+  // Place strap at goblin's body position initially (where it's connected)
+  const bagStrap = document.getElementById('bagStrap');
+  bagStrap.style.display = 'block';
+  bagStrap.style.position = 'absolute';
+  bagStrap.style.left = (rect.left - mapRect.left) + 'px';
+  bagStrap.style.top = (rect.top - mapRect.top) + 'px';
+  bagStrap.style.opacity = '1';
 
   // Find the "need" word in "need a custom build?" message
   const pricingElements = document.querySelectorAll('.quest-pricing');
@@ -1248,7 +1299,7 @@ async function animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX
   tracker.classList.add('goblin-falling');
   
   // Use simple straight fall for both mobile and desktop to "need" word
-  console.log('Falling to "need" word at:', goblinLandPos);
+  console.log('Falling to landing position:', goblinLandPos);
   
   const fallDuration = 1200;
   const fallSteps = 60;
@@ -1261,6 +1312,9 @@ async function animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX
   const fallDistance = goblinLandPos.y - fallStartY;
   const goblinDriftX = Math.tan(goblinAngle) * fallDistance;
   const bagDriftX = Math.tan(bagAngle) * fallDistance;
+  
+  // Get strap element (already set up in handleFall)
+  const bagStrap = document.getElementById('bagStrap');
   
   for (let step = 0; step <= fallSteps; step++) {
     const progress = step / fallSteps;
@@ -1282,36 +1336,64 @@ async function animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX
     bag.style.top = bagY + 'px';
     bag.style.opacity = '1'; // Always visible
     
+    // Strap falls with bag but tumbles/rotates as it disconnects
+    // Start at goblin position, end trailing behind/above bag
+    const strapX = fallStartX + (bagDriftX * easeProgress) - 8;
+    const strapY = fallStartY + ((bagLandPos.y - fallStartY) * easeProgress) - (16 * (1 - progress)); // Trails above
+    const rotation = progress * 180; // Tumbles as it falls
+    
+    bagStrap.style.left = strapX + 'px';
+    bagStrap.style.top = strapY + 'px';
+    bagStrap.style.opacity = '1';
+    bagStrap.style.transform = `rotate(${rotation}deg)`;
+    
     await new Promise(resolve => setTimeout(resolve, fallDuration / fallSteps));
   }
   
   // Ensure final positions
-  container.style.left = (fallStartX + goblinDriftX) + 'px';
-  container.style.top = goblinLandPos.y + 'px';
-  bag.style.left = (fallStartX + bagDriftX) + 'px';
-  bag.style.top = bagLandPos.y + 'px';
+  const finalGoblinX = fallStartX + goblinDriftX;
+  const finalGoblinY = goblinLandPos.y;
+  const finalBagX = fallStartX + bagDriftX;
+  const finalBagY = bagLandPos.y;
   
-  console.log('Landed on "need" word');
+  container.style.left = finalGoblinX + 'px';
+  container.style.top = finalGoblinY + 'px';
+  bag.style.left = finalBagX + 'px';
+  bag.style.top = finalBagY + 'px';
   
-  // SHAKE THE "NEED" WORD ON IMPACT
-  if (goblinLandPos.impactElement) {
-    goblinLandPos.impactElement.classList.add('impact-effect');
-    setTimeout(() => goblinLandPos.impactElement.classList.remove('impact-effect'), 400);
-  }
+  // After landing, strap settles near bag
+  bagStrap.classList.remove('falling'); // Stop wave animation
+  bagStrap.style.left = (finalBagX - 8) + 'px';
+  bagStrap.style.top = (finalBagY + 8) + 'px'; // Next to bag
+  bagStrap.style.transform = 'rotate(45deg)'; // Landed angle
   
-  // Land in death pose
+  console.log('Landed - finding impact words...');
+  
+  // Land in death pose FIRST
   tracker.classList.remove('goblin-falling');
   tracker.classList.add('goblin-death-pose');
   
-  await new Promise(resolve => setTimeout(resolve, 600));
+  // FIND AND SHAKE THE WORD THE GOBLIN LANDED ON
+  const mapRect = document.getElementById('questMap').getBoundingClientRect();
+  const absoluteGoblinX = finalGoblinX + mapRect.left;
+  const absoluteGoblinY = finalGoblinY + mapRect.top;
+  
+  shakeWordAtPosition(absoluteGoblinX, absoluteGoblinY, 'GOBLIN');
+  
+  // FIND AND SHAKE THE WORD THE BAG LANDED ON
+  const absoluteBagX = finalBagX + mapRect.left;
+  const absoluteBagY = finalBagY + mapRect.top;
+  
+  shakeWordAtPosition(absoluteBagX, absoluteBagY, 'BAG');
+  
+  // Stay laying down for 2.5 seconds
+  await new Promise(resolve => setTimeout(resolve, 2500));
   
   // Get up
   tracker.classList.remove('goblin-death-pose');
   
   // Face the bag
-  const currentGoblinX = parseFloat(container.style.left);
-  const currentBagX = parseFloat(bag.style.left);
-  const directionToBag = currentBagX > currentGoblinX;
+  const directionToBag = finalBagX > finalGoblinX;
   
   if (directionToBag) {
     goblinNoBag.style.transform = 'scaleX(1)';
@@ -1319,42 +1401,61 @@ async function animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX
     goblinNoBag.style.transform = 'scaleX(-1)';
   }
   
-  console.log('Crawling to bag...');
+  // Calculate distance to bag
+  const distanceToBag = Math.sqrt(
+    Math.pow(finalBagX - finalGoblinX, 2) + 
+    Math.pow(finalBagY - finalGoblinY, 2)
+  );
   
-  // Crawl to bag
-  tracker.classList.add('goblin-crawling');
+  console.log('Distance to bag:', distanceToBag);
   
-  const crawlDuration = 1400;
-  const crawlSteps = 70;
-  
-  const startCrawlX = parseFloat(container.style.left);
-  const startCrawlY = parseFloat(container.style.top);
-  const endCrawlX = parseFloat(bag.style.left);
-  const endCrawlY = parseFloat(bag.style.top);
-  
-  for (let step = 0; step <= crawlSteps; step++) {
-    const progress = step / crawlSteps;
-    const currentX = startCrawlX + (endCrawlX - startCrawlX) * progress;
-    const currentY = startCrawlY + (endCrawlY - startCrawlY) * progress;
+  // Only crawl if bag is far enough away (more than 30px)
+  if (distanceToBag > 30) {
+    console.log('Crawling to bag...');
     
-    container.style.left = currentX + 'px';
-    container.style.top = currentY + 'px';
+    tracker.classList.add('goblin-crawling');
     
-    await new Promise(resolve => setTimeout(resolve, crawlDuration / crawlSteps));
+    const crawlDuration = 1400;
+    const crawlSteps = 70;
+    
+    for (let step = 0; step <= crawlSteps; step++) {
+      const progress = step / crawlSteps;
+      const currentX = finalGoblinX + (finalBagX - finalGoblinX) * progress;
+      const currentY = finalGoblinY + (finalBagY - finalGoblinY) * progress;
+      
+      container.style.left = currentX + 'px';
+      container.style.top = currentY + 'px';
+      
+      // Check if close enough to stop early
+      const currentDist = Math.sqrt(
+        Math.pow(finalBagX - currentX, 2) + 
+        Math.pow(finalBagY - currentY, 2)
+      );
+      
+      if (currentDist < 25) {
+        console.log('Close enough to bag, stopping crawl');
+        break;
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, crawlDuration / crawlSteps));
+    }
+    
+    tracker.classList.remove('goblin-crawling');
+  } else {
+    console.log('Bag is close enough, no need to crawl');
   }
-  
-  tracker.classList.remove('goblin-crawling');
   
   console.log('Reached bag, picking up...');
   
   await new Promise(resolve => setTimeout(resolve, 300));
   
-  // Pick up bag
+  // Pick up bag and strap
   bag.style.display = 'none';
+  bagStrap.style.display = 'none';
   goblinState.hasBag = true;
   
   // Big smoke puff at pickup location
-  createSmokePuff(endCrawlX, endCrawlY);
+  createSmokePuff(finalBagX, finalBagY);
   
   console.log('Teleporting back to waypoint...');
   
@@ -1396,6 +1497,132 @@ async function animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX
   directionChanges = 0;
   
   console.log('Recovery sequence complete');
+}
+
+function shakeWordAtPosition(x, y, label) {
+  console.log(`Finding ${label} impact word at:`, x, y);
+  
+  // Determine shake intensity - bag is much smaller, causes lighter wobble
+  const isLightShake = (label === 'BAG');
+  const shakeClass = isLightShake ? 'impact-effect-light' : 'impact-effect';
+  const shakeDuration = isLightShake ? 300 : 400;
+  
+  console.log(`${label} will use ${shakeClass}`);
+  
+  // Get the element at this position
+  const element = document.elementFromPoint(x, y);
+  
+  if (!element) {
+    console.log(`No element found at ${label} position`);
+    return;
+  }
+  
+  console.log(`${label} landed on:`, element.tagName, element.className);
+  
+  // Find the text container
+  let textContainer = element;
+  
+  // If we hit a span or other inline element, get the parent
+  if (element.tagName === 'SPAN' || element.tagName === 'STRONG' || element.tagName === 'EM') {
+    textContainer = element.parentElement;
+  }
+  
+  // Make sure we have a text-containing element
+  if (!textContainer.textContent || textContainer.textContent.trim().length === 0) {
+    console.log(`${label}: No text content found`);
+    return;
+  }
+  
+  try {
+    const range = document.caretRangeFromPoint(x, y);
+    
+    if (!range) {
+      console.log(`${label}: Could not create range`);
+      // Fallback: shake the whole element
+      element.classList.add(shakeClass);
+      setTimeout(() => element.classList.remove(shakeClass), shakeDuration);
+      return;
+    }
+    
+    const textNode = range.startContainer;
+    const offset = range.startOffset;
+    
+    console.log(`${label} offset:`, offset, 'in text:', textNode.textContent?.substring(0, 50));
+    
+    if (textNode.nodeType === Node.TEXT_NODE) {
+      const fullText = textNode.textContent;
+      
+      // Find the word boundaries around the impact point
+      let wordStart = offset;
+      let wordEnd = offset;
+      
+      // Find start of word (go backwards until we hit whitespace or punctuation)
+      while (wordStart > 0 && /[a-zA-Z0-9]/.test(fullText[wordStart - 1])) {
+        wordStart--;
+      }
+      
+      // Find end of word (go forwards until we hit whitespace or punctuation)
+      while (wordEnd < fullText.length && /[a-zA-Z0-9]/.test(fullText[wordEnd])) {
+        wordEnd++;
+      }
+      
+      const impactWord = fullText.substring(wordStart, wordEnd).trim();
+      console.log(`${label} impact word: "${impactWord}"`);
+      
+      if (impactWord && impactWord.length > 0) {
+        // Wrap the word in a span for shaking
+        const before = fullText.substring(0, wordStart);
+        const after = fullText.substring(wordEnd);
+        
+        const wrapper = document.createElement('span');
+        wrapper.className = 'impact-word-shake';
+        wrapper.style.display = 'inline-block'; // CRITICAL for transform to work
+        wrapper.textContent = impactWord;
+        
+        const parent = textNode.parentNode;
+        const beforeText = document.createTextNode(before);
+        const afterText = document.createTextNode(after);
+        
+        // Replace the text node with our three pieces
+        parent.insertBefore(beforeText, textNode);
+        parent.insertBefore(wrapper, textNode);
+        parent.insertBefore(afterText, textNode);
+        parent.removeChild(textNode);
+        
+        console.log(`${label}: Shaking word "${impactWord}" with ${shakeClass}`);
+        
+        // Shake it with appropriate intensity!
+        wrapper.classList.add(shakeClass);
+        setTimeout(() => {
+          wrapper.classList.remove(shakeClass);
+          // Unwrap after animation
+          setTimeout(() => {
+            if (wrapper.parentNode === parent) {
+              const fullText = before + impactWord + after;
+              const newTextNode = document.createTextNode(fullText);
+              parent.insertBefore(newTextNode, beforeText);
+              beforeText.remove();
+              wrapper.remove();
+              afterText.remove();
+            }
+          }, 100);
+        }, shakeDuration);
+      } else {
+        console.log(`${label}: Empty word, shaking whole element`);
+        element.classList.add(shakeClass);
+        setTimeout(() => element.classList.remove(shakeClass), shakeDuration);
+      }
+    } else {
+      console.log(`${label}: Not a text node, shaking element`);
+      element.classList.add(shakeClass);
+      setTimeout(() => element.classList.remove(shakeClass), shakeDuration);
+    }
+  } catch (error) {
+    console.error(`${label} word shake error:`, error);
+    // Fallback: shake the element
+    element.classList.add(shakeClass);
+    setTimeout(() => element.classList.remove(shakeClass), shakeDuration);
+  }
 }
 
 function getRandomTextPosition(minY, maxY) {
@@ -1503,11 +1730,31 @@ function updateQuestVisuals() {
     lastDirection = currentDirection;
   }
   
+  // Create waypoint dots positioned exactly on the vertical line
+  const centerX = isMobile ? 15 : (mapRect.width / 2);
+  
+  // Remove any existing dots
+  document.querySelectorAll('.waypoint-dot').forEach(dot => dot.remove());
+  
+  items.forEach((item) => {
+    const h3 = item.querySelector('h3');
+    const h3Rect = h3.getBoundingClientRect();
+    const y = h3Rect.top - mapRect.top + (h3Rect.height / 2);
+    
+    const dot = document.createElement('div');
+    dot.className = 'waypoint-dot';
+    dot.style.left = centerX + 'px';
+    dot.style.top = y + 'px';
+    map.appendChild(dot);
+  });
+  
   let points = [];
   
   const waypoints = calculateWaypoints();
+  
+  // Create straight vertical line - all waypoints at same X position
   waypoints.forEach(wp => {
-    points.push({x: wp.x, y: wp.y});
+    points.push({x: centerX, y: wp.y});
   });
 
   let d = `M ${points[0].x} ${points[0].y}`;
@@ -1548,32 +1795,11 @@ function updateQuestVisuals() {
   const goblinLeft = document.getElementById('goblinLeft');
   const goblinNoBag = document.getElementById('goblinNoBag');
   
-  // only show normal sprites if not falling
+  // ALWAYS face right - only show normal sprites if not falling
   if (!isFalling) {
     goblinNoBag.style.display = 'none';
-    
-    let facingRight;
-    
-    if (isMobile) {
-      facingRight = true;
-    } else {
-      const scrollingUp = currentScrollY < lastScrollY;
-      const ahead = path.getPointAtLength(Math.min(totalLength, currentDistance + 1));
-      
-      if (scrollingUp) {
-        facingRight = ahead.x < point.x;
-      } else {
-        facingRight = ahead.x > point.x;
-      }
-    }
-    
-    if (facingRight) {
-      goblinRight.style.display = 'block';
-      goblinLeft.style.display = 'none';
-    } else {
-      goblinRight.style.display = 'none';
-      goblinLeft.style.display = 'block';
-    }
+    goblinRight.style.display = 'block';
+    goblinLeft.style.display = 'none';
   }
 
   tracker.classList.add('goblin-walking');
