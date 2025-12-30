@@ -64,12 +64,12 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color
 @keyframes drawStrike{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
 #new-subject{display:none;margin-left:0.2em;margin-right:-0.3em;visibility:hidden}
 #new-subject.visible{visibility:visible}
-#new-subject .i-stalk{opacity:0}
-#new-subject .i-dot{opacity:0}
-#new-subject.visible .i-stalk{animation:fadeInStalk 0.3s ease-out forwards}
-#new-subject.visible .i-dot{animation:fadeInDot 0.15s ease-out 0.25s forwards}
-@keyframes fadeInStalk{to{opacity:1}}
-@keyframes fadeInDot{to{opacity:1}}
+#new-subject .i-stalk{stroke-dasharray:25;stroke-dashoffset:25;fill-opacity:0}
+#new-subject .i-dot{opacity:0;transform-origin:center;transform:scale(0)}
+#new-subject.visible .i-stalk{animation:drawPenStalk 0.6s cubic-bezier(0.4,0,0.2,1) forwards}
+#new-subject.visible .i-dot{animation:stampDot 0.12s cubic-bezier(0.4,0,0.6,1) 0.55s forwards}
+@keyframes drawPenStalk{to{stroke-dashoffset:0;fill-opacity:1}}
+@keyframes stampDot{to{opacity:1;transform:scale(1)}}
 
 @keyframes impactShake{0%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-1deg)}50%{transform:translateX(4px) rotate(1deg)}75%{transform:translateX(-2px)}100%{transform:translateX(0)}}
 .impact-effect{animation:impactShake 0.4s cubic-bezier(.36,.07,.19,.97) both}
