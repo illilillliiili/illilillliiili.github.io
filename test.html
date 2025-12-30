@@ -59,7 +59,8 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color
 #subject.active::after{animation:strikethrough 0.4s ease-out forwards}
 @keyframes strikethrough{from{width:0}to{width:calc(100% + 6px)}}
 #new-subject{color:#7bbf7b;display:none;margin-left:0.25em}
-#subject.active~#new-subject{display:inline}
+#subject.active~#new-subject{display:inline;animation:fadeIn 0.3s ease 0.5s both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 @keyframes impactShake{0%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-1deg)}50%{transform:translateX(4px) rotate(1deg)}75%{transform:translateX(-2px)}100%{transform:translateX(0)}}
 .impact-effect{animation:impactShake 0.4s cubic-bezier(.36,.07,.19,.97) both}
