@@ -270,7 +270,8 @@ p, li {
   width: 0;
   height: 2px;
   background: #7bbf7b;
-  animation: strikethrough 0.4s ease-out 0.5s forwards;
+  border-radius: 1px; /* Rounded ends like a pen stroke */
+  animation: strikethrough 0.8s ease-out 0.5s forwards;
 }
 
 @keyframes strikethrough {
@@ -281,11 +282,19 @@ p, li {
 
 #new-subject {
   position: absolute;
-  left: 1.3em; /* Closer to "we" */
+  left: 0;
   top: 0;
   display: inline-block;
-  opacity: 0;
-  animation: fadeIn 0.3s ease-out 0.9s forwards;
+  animation: slideIn 0.6s ease-out 1.3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    left: 0;
+  }
+  to {
+    left: 1.3em;
+  }
 }
 
 @keyframes fadeIn {
@@ -815,7 +824,7 @@ p, li {
       • graphic novels and comic books<br>
       • video games: character, narrative design, dialogue, environmental storytelling<br>
       • lore: technical and worldbuilding guides for board and card games<br>
-      • creative projects that can't fit into a neat list of bulletpoints</p>
+      • any wordy project, from bitesize blurb to multi-layered narrative beast</p>
     </div>
     
     <div class="genre-avoid">
@@ -1002,25 +1011,25 @@ p, li {
 
       <div class="quest-item">
         <h3>coffee</h3>
-        <p>you want to meet the goblins.<br>no gold required.</p>
+        <p>you want to meet the goblins. no gold required.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
         <h3>creative development</h3>
-        <p>you're brainstorming. so many possibilities.<br>we make sure you aren't building on a swamp.</p>
+        <p>you're brainstorming. so many possibilities. let's make sure you aren't building on a swamp.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
         <h3>editorial assessment</h3>
-        <p>you're drafting. this is the hardest part.<br>we tell you exactly what works. and what doesn't.</p>
+        <p>you're drafting. this might be hardest part. we'll align your execution with your creative ambitions.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
       
       <div class="quest-item">
         <h3>pitch feedback</h3>
-        <p>your project is ready. exciting.<br>we make sure you nail the package.</p>
+        <p>your project is ready. but are you? it's time to nail the package.</p>
         <a href="#" class="read-more">read more <span class="arrow">></span></a>
       </div>
     </div>
@@ -1701,7 +1710,7 @@ function updateQuestVisuals() {
       clearTimeout(directionTimer);
       directionTimer = setTimeout(() => { directionChanges = 0; }, 500);
       
-      if (directionChanges > 10) {
+      if (directionChanges > 20) {
         handleFall();
       }
     }
