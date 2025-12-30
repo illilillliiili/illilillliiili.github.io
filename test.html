@@ -56,14 +56,17 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color
 /* WE -> I CORRECTION */
 #subject{position:relative}
 #subject::after{display:none}
-#strikethrough-svg{position:absolute;left:-4px;top:45%;width:0;height:8px;overflow:visible;opacity:0}
-#strikethrough-svg.active{opacity:1;animation:growStrike 0.5s ease-out forwards}
+#strikethrough-svg{position:absolute;left:-4px;top:45%;width:0;height:8px;overflow:visible;opacity:0;visibility:hidden}
+#strikethrough-svg.active{visibility:visible;opacity:1;animation:growStrike 0.5s ease-out forwards}
 @keyframes growStrike{from{width:0}to{width:calc(100% + 6px)}}
-#new-subject{display:none;margin-left:0.15em;opacity:0;transition:opacity 0.3s ease}
-#new-subject.visible{opacity:1}
-#new-subject svg path{stroke-dasharray:50;stroke-dashoffset:50}
-#new-subject.visible svg path{animation:drawIn 0.4s ease-out forwards}
-@keyframes drawIn{to{stroke-dashoffset:0}}
+#new-subject{display:none;margin-left:0.22em;visibility:hidden}
+#new-subject.visible{visibility:visible}
+#new-subject .i-stalk{opacity:0}
+#new-subject .i-dot{opacity:0}
+#new-subject.visible .i-stalk{animation:fadeInStalk 0.3s ease-out forwards}
+#new-subject.visible .i-dot{animation:fadeInDot 0.15s ease-out 0.25s forwards}
+@keyframes fadeInStalk{to{opacity:1}}
+@keyframes fadeInDot{to{opacity:1}}
 
 @keyframes impactShake{0%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-1deg)}50%{transform:translateX(4px) rotate(1deg)}75%{transform:translateX(-2px)}100%{transform:translateX(0)}}
 .impact-effect{animation:impactShake 0.4s cubic-bezier(.36,.07,.19,.97) both}
@@ -129,7 +132,7 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color
 <div class="container">
 <div class="hero">
 <h1>definitely not three goblins in a trenchcoat</h1>
-<p>yes, hello. this is noah. please ignore the shifting height; nothing to see here. <span id="subject">we<svg id="strikethrough-svg" viewBox="0 0 30 8" preserveAspectRatio="none"><path d="M0 4 Q15 3.8, 26 4 Q28 3, 30 2.5" fill="none" stroke="#7bbf7b" stroke-width="1.6" stroke-linecap="round"/></svg></span><span id="new-subject"><svg viewBox="0 0 12 20" width="10" height="16" style="vertical-align:baseline;margin-bottom:-2px"><path d="M6 5.5c0.8 0 1.5-0.6 1.6-1.4 0.1-0.9-0.5-1.6-1.3-1.7-0.9-0.1-1.7 0.5-1.8 1.3-0.1 0.9 0.6 1.7 1.5 1.8z" fill="#7bbf7b"/><path d="M5 8c0.3-0.2 0.8-0.1 1 0.2 0.5 0.8 0.3 2.5 0.2 4-0.1 1.5-0.3 3.2 0.1 4.5 0.1 0.4 0.3 0.8 0.2 1.2-0.2 0.5-0.8 0.3-1.1 0-0.4-0.4-0.5-1-0.5-1.6 0-1.4 0.2-2.8 0.3-4.2 0.1-1.2 0.2-2.6-0.2-3.6-0.1-0.2 0-0.4 0-0.5z" fill="#7bbf7b" stroke="#7bbf7b" stroke-width="0.5" stroke-linecap="round"/></svg></span> run an editorial and creative outfit from a dimly lit, well-guarded workshop in london. with 5+ years of big four publishing experience and counting, i apply industry grit to stress-test your project and ensure it is ready to cause trouble in the market.</p>
+<p>yes, hello. this is noah. please ignore the shifting height; nothing to see here. <span id="subject">we<svg id="strikethrough-svg" viewBox="0 0 30 8" preserveAspectRatio="none"><path d="M0 4 Q15 3.8, 26 4 Q28 3, 30 2.5" fill="none" stroke="#7bbf7b" stroke-width="1.6" stroke-linecap="round"/></svg></span><span id="new-subject"><svg viewBox="0 0 12 20" width="10" height="16" style="vertical-align:baseline;margin-bottom:-2px"><path class="i-stalk" d="M5 8c0.3-0.2 0.8-0.1 1 0.2 0.5 0.8 0.3 2.5 0.2 4-0.1 1.5-0.3 3.2 0.1 4.5 0.1 0.4 0.3 0.8 0.2 1.2-0.2 0.5-0.8 0.3-1.1 0-0.4-0.4-0.5-1-0.5-1.6 0-1.4 0.2-2.8 0.3-4.2 0.1-1.2 0.2-2.6-0.2-3.6-0.1-0.2 0-0.4 0-0.5z" fill="#7bbf7b" stroke="#7bbf7b" stroke-width="0.5" stroke-linecap="round"/><path class="i-dot" d="M6 5.5c0.8 0 1.5-0.6 1.6-1.4 0.1-0.9-0.5-1.6-1.3-1.7-0.9-0.1-1.7 0.5-1.8 1.3-0.1 0.9 0.6 1.7 1.5 1.8z" fill="#7bbf7b"/></svg></span><span style="margin-left:0.15em">run</span> an editorial and creative outfit from a dimly lit, well-guarded workshop in london. with 5+ years of big four publishing experience and counting, i apply industry grit to stress-test your project and ensure it is ready to cause trouble in the market.</p>
 </div>
 <div class="section crew-section">
 <h2>meet the team</h2>
