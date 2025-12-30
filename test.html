@@ -1126,80 +1126,10 @@ function calculateWaypoints() {
   });
 }
 
-function handleFall() {
-  if (isFalling) return;
-  isFalling = true;
-  
-  const container = document.getElementById('goblinContainer');
-  const goblinRight = document.getElementById('goblinRight');
-  const goblinLeft = document.getElementById('goblinLeft');
-  const goblinNoBag = document.getElementById('goblinNoBag');
-  const bag = document.getElementById('bagSprite');
-  const rect = container.getBoundingClientRect();
+function getNearestWaypoint(scrollPosition, waypoints) {
   const mapRect = document.getElementById('questMap').getBoundingClientRect();
-
-  // Hide normal sprites, show no-bag version
-  goblinRight.style.display = 'none';
-  goblinLeft.style.display = 'none';
-  goblinNoBag.style.display = 'block';
+  const relativeY = scrollPosition - (mapRect.top + window.pageYOffset);
   
-  // Show bag at current position
-  bag.style.display = 'block';
-  bag.style.position = 'absolute';
-  bag.style.left = (rect.left - mapRect.left) + 'px';
-  bag.style.top = (rect.top - mapRect.top) + 'px';
-
-  // Heavy fall animation - straight down past entire screen
-  container.animate([
-    { transform: 'translate(-50%, -50%) rotate(0deg)', offset: 0 },
-    { transform: `translate(-50%, -50%) translateY(${window.innerHeight + 300}px) rotate(120deg)`, offset: 1 }
-  ], {
-    duration: 1200,
-    easing: 'cubic-bezier(0.5, 0, 1, 0.5)',
-    fill: 'forwards'
-  }).onfinish = () => {
-    container.style.opacity = '0';
-    setTimeout(recoverGoblin, 1000);
-  };
-  
-  // Bag falls separately
-  bag.animate([
-    { transform: 'translateY(0) rotate(0deg)', offset: 0 },
-    { transform: `translateY(${window.innerHeight + 250}px) rotate(180deg)`, offset: 1 }
-  ], {
-    duration: 1100,
-    easing: 'cubic-bezier(0.5, 0, 1, 0.5)',
-    fill: 'forwards'
-  });
-}
-
-function recoverGoblin() {
-  const container = document.getElementById('goblinContainer');
-  const goblinRight = document.getElementById('goblinRight');
-  const goblinLeft = document.getElementById('goblinLeft');
-  const goblinNoBag = document.getElementById('goblinNoBag');
-  const bag = document.getElementById('bagSprite');
-
-  // Reset state
-  isFalling = false;
-  directionChanges = 0;
-  
-  // Hide bag and no-bag sprite
-  bag.style.display = 'none';
-  goblinNoBag.style.display = 'none';
-  
-  // Show normal sprite
-  goblinRight.style.display = 'block';
-  goblinLeft.style.display = 'none';
-  
-  // Calculate position on timeline
-  const waypoints = calculateWaypoints();
-  const scrollY = window.pageYOffset;
-  const viewportCenter = scrollY + (window.innerHeight / 2);
-  const mapRect = document.getElementById('questMap').getBoundingClientRect();
-  const relativeY = viewportCenter - (mapRect.top + scrollY);
-  
-  // Find nearest waypoint
   let nearestIndex = 0;
   let minDistance = Math.abs(waypoints[0].y - relativeY);
   
@@ -1211,25 +1141,336 @@ function recoverGoblin() {
     }
   });
   
-  const nearest = waypoints[nearestIndex];
+  return nearestIndex;
+}
+
+function updateGoblinPosition() {
+  updateQuestVisuals();
+}
+
+function handleFall() {
+  console.log('handleFall triggered, isFalling:', isFalling);
+  if (isFalling) return;
+  isFalling = true;
   
-  // Position goblin at waypoint
-  container.style.left = nearest.x + 'px';
-  container.style.top = nearest.y + 'px';
+  const container = document.getElementById('goblinContainer');
+  const tracker = document.getElementById('goblinTracker');
+  const goblinRight = document.getElementById('goblinRight');
+  const goblinLeft = document.getElementById('goblinLeft');
+  const goblinNoBag = document.getElementById('goblinNoBag');
+  const bag = document.getElementById('bagSprite');
+  const mapRect = document.getElementById('questMap').getBoundingClientRect();
+  const rect = container.getBoundingClientRect();
+
+  console.log('Container before fall:', {
+    display: container.style.display,
+    opacity: container.style.opacity,
+    left: container.style.left,
+    top: container.style.top
+  });
+
+  // Save original position for teleport back
+  const fallStartX = parseFloat(container.style.left);
+  const fallStartY = parseFloat(container.style.top);
+  goblinState.fallStartPosition = { x: fallStartX, y: fallStartY };
+
+  // switch to no-bag sprite
+  goblinRight.style.display = 'none';
+  goblinLeft.style.display = 'none';
+  goblinNoBag.style.display = 'block';
+  
+  // place bag exactly where he fell
+  bag.style.display = 'block';
+  bag.style.position = 'absolute';
+  bag.style.left = (rect.left - mapRect.left) + 'px';
+  bag.style.top = (rect.top - mapRect.top) + 'px';
+
+  // Find the "need" word in "need a custom build?" message
+  const pricingElements = document.querySelectorAll('.quest-pricing');
+  let needWordElement = null;
+  let needWordPosition = null;
+  
+  pricingElements.forEach(pricing => {
+    const text = pricing.textContent;
+    if (text.includes('need')) {
+      // Create a span wrapper around "need" if it doesn't exist
+      const html = pricing.innerHTML;
+      if (!html.includes('<span class="need-word">')) {
+        pricing.innerHTML = html.replace(/need/i, '<span class="need-word">need</span>');
+      }
+      needWordElement = pricing.querySelector('.need-word');
+      
+      if (needWordElement) {
+        const needRect = needWordElement.getBoundingClientRect();
+        needWordPosition = {
+          x: needRect.left - mapRect.left + (needRect.width / 2),
+          y: needRect.top - mapRect.top + (needRect.height / 2),
+          element: needWordElement
+        };
+      }
+    }
+  });
+  
+  // Fallback if "need" not found - use bottom of quest pricing
+  if (!needWordPosition && pricingElements.length > 0) {
+    const lastPricing = pricingElements[pricingElements.length - 1];
+    const pricingRect = lastPricing.getBoundingClientRect();
+    needWordPosition = {
+      x: pricingRect.left - mapRect.left + (pricingRect.width / 2),
+      y: pricingRect.top - mapRect.top + (pricingRect.height / 2),
+      element: lastPricing
+    };
+  }
+  
+  console.log('Landing target (need word):', needWordPosition);
+  
+  // Calculate landing positions - both land near "need" with slight variation
+  const goblinLandPos = {
+    x: needWordPosition.x + (Math.random() - 0.5) * 40,
+    y: needWordPosition.y,
+    impactElement: needWordPosition.element
+  };
+  
+  const bagLandPos = {
+    x: needWordPosition.x + (Math.random() - 0.5) * 60,
+    y: needWordPosition.y + (Math.random() - 0.5) * 20
+  };
+
+  // Heavy fall animation
+  animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX, fallStartY);
+}
+
+async function animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX, fallStartY) {
+  const tracker = document.getElementById('goblinTracker');
+  const goblinNoBag = document.getElementById('goblinNoBag');
+  const isMobile = window.innerWidth < 600;
+  
+  tracker.classList.add('goblin-falling');
+  
+  // Use simple straight fall for both mobile and desktop to "need" word
+  console.log('Falling to "need" word at:', goblinLandPos);
+  
+  const fallDuration = 1200;
+  const fallSteps = 60;
+  
+  // Calculate slight drift (within 15 degrees)
+  const angleVariation = 15 * (Math.PI / 180);
+  const goblinAngle = (Math.random() - 0.5) * angleVariation;
+  const bagAngle = (Math.random() - 0.5) * angleVariation;
+  
+  const fallDistance = goblinLandPos.y - fallStartY;
+  const goblinDriftX = Math.tan(goblinAngle) * fallDistance;
+  const bagDriftX = Math.tan(bagAngle) * fallDistance;
+  
+  for (let step = 0; step <= fallSteps; step++) {
+    const progress = step / fallSteps;
+    const easeProgress = progress * progress; // Gravity acceleration
+    
+    // Goblin falls with slight drift
+    const goblinX = fallStartX + goblinDriftX * easeProgress;
+    const goblinY = fallStartY + (goblinLandPos.y - fallStartY) * easeProgress;
+    
+    container.style.left = goblinX + 'px';
+    container.style.top = goblinY + 'px';
+    container.style.opacity = '1'; // Always visible
+    
+    // Bag falls separately with slight drift
+    const bagX = fallStartX + bagDriftX * easeProgress;
+    const bagY = fallStartY + (bagLandPos.y - fallStartY) * easeProgress;
+    
+    bag.style.left = bagX + 'px';
+    bag.style.top = bagY + 'px';
+    bag.style.opacity = '1'; // Always visible
+    
+    await new Promise(resolve => setTimeout(resolve, fallDuration / fallSteps));
+  }
+  
+  // Ensure final positions
+  container.style.left = (fallStartX + goblinDriftX) + 'px';
+  container.style.top = goblinLandPos.y + 'px';
+  bag.style.left = (fallStartX + bagDriftX) + 'px';
+  bag.style.top = bagLandPos.y + 'px';
+  
+  console.log('Landed on "need" word');
+  
+  // SHAKE THE "NEED" WORD ON IMPACT
+  if (goblinLandPos.impactElement) {
+    goblinLandPos.impactElement.classList.add('impact-effect');
+    setTimeout(() => goblinLandPos.impactElement.classList.remove('impact-effect'), 400);
+  }
+  
+  // Land in death pose
+  tracker.classList.remove('goblin-falling');
+  tracker.classList.add('goblin-death-pose');
+  
+  await new Promise(resolve => setTimeout(resolve, 600));
+  
+  // Get up
+  tracker.classList.remove('goblin-death-pose');
+  
+  // Face the bag
+  const currentGoblinX = parseFloat(container.style.left);
+  const currentBagX = parseFloat(bag.style.left);
+  const directionToBag = currentBagX > currentGoblinX;
+  
+  if (directionToBag) {
+    goblinNoBag.style.transform = 'scaleX(1)';
+  } else {
+    goblinNoBag.style.transform = 'scaleX(-1)';
+  }
+  
+  console.log('Crawling to bag...');
+  
+  // Crawl to bag
+  tracker.classList.add('goblin-crawling');
+  
+  const crawlDuration = 1400;
+  const crawlSteps = 70;
+  
+  const startCrawlX = parseFloat(container.style.left);
+  const startCrawlY = parseFloat(container.style.top);
+  const endCrawlX = parseFloat(bag.style.left);
+  const endCrawlY = parseFloat(bag.style.top);
+  
+  for (let step = 0; step <= crawlSteps; step++) {
+    const progress = step / crawlSteps;
+    const currentX = startCrawlX + (endCrawlX - startCrawlX) * progress;
+    const currentY = startCrawlY + (endCrawlY - startCrawlY) * progress;
+    
+    container.style.left = currentX + 'px';
+    container.style.top = currentY + 'px';
+    
+    await new Promise(resolve => setTimeout(resolve, crawlDuration / crawlSteps));
+  }
+  
+  tracker.classList.remove('goblin-crawling');
+  
+  console.log('Reached bag, picking up...');
+  
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  // Pick up bag
+  bag.style.display = 'none';
+  goblinState.hasBag = true;
+  
+  // Big smoke puff at pickup location
+  createSmokePuff(endCrawlX, endCrawlY);
+  
+  console.log('Teleporting back to waypoint...');
+  
+  // Hide during teleport
+  tracker.style.opacity = '0';
+  
+  await new Promise(resolve => setTimeout(resolve, 400));
+  
+  // Teleport back to original waypoint
+  container.style.left = goblinState.fallStartPosition.x + 'px';
+  container.style.top = goblinState.fallStartPosition.y + 'px';
   container.style.transform = 'translate(-50%, -50%)';
   
-  // CRITICAL: Reset display and opacity
+  // Restore normal sprite
+  goblinNoBag.style.display = 'none';
+  goblinNoBag.style.transform = '';
+  
+  const goblinRight = document.getElementById('goblinRight');
+  const goblinLeft = document.getElementById('goblinLeft');
+  goblinRight.style.display = 'block';
+  goblinLeft.style.display = 'none';
+  
+  // Smoke puff at arrival
+  createSmokePuff(goblinState.fallStartPosition.x, goblinState.fallStartPosition.y);
+  
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  // Show goblin
+  tracker.style.opacity = '1';
   container.style.display = 'flex';
   container.style.opacity = '1';
   
-  // Add impact shake to nearest heading
-  if (nearest && nearest.element) {
-    nearest.element.classList.add('impact-effect');
-    setTimeout(() => nearest.element.classList.remove('impact-effect'), 400);
+  console.log('Teleport complete, back on waypoint');
+  
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  // Reset state
+  isFalling = false;
+  directionChanges = 0;
+  
+  console.log('Recovery sequence complete');
+}
+
+function getRandomTextPosition(minY, maxY) {
+  const items = document.querySelectorAll('.quest-item');
+  const mapRect = document.getElementById('questMap').getBoundingClientRect();
+  const possibleTargets = [];
+  
+  items.forEach((item) => {
+    const h3 = item.querySelector('h3');
+    const p = item.querySelector('p');
+    const serviceTag = item.querySelector('.service-tag');
+    
+    if (h3) {
+      const h3Rect = h3.getBoundingClientRect();
+      const h3Y = h3Rect.top - mapRect.top + (h3Rect.height / 2);
+      if (h3Y >= minY && h3Y <= maxY) {
+        possibleTargets.push({
+          x: h3Rect.left - mapRect.left + Math.random() * h3Rect.width,
+          y: h3Y
+        });
+      }
+    }
+    
+    if (serviceTag) {
+      const tagRect = serviceTag.getBoundingClientRect();
+      const tagY = tagRect.top - mapRect.top + (tagRect.height / 2);
+      if (tagY >= minY && tagY <= maxY) {
+        possibleTargets.push({
+          x: tagRect.left - mapRect.left + Math.random() * tagRect.width,
+          y: tagY
+        });
+      }
+    }
+    
+    if (p) {
+      const pRect = p.getBoundingClientRect();
+      const pY = pRect.top - mapRect.top + (pRect.height / 2);
+      if (pY >= minY && pY <= maxY) {
+        possibleTargets.push({
+          x: pRect.left - mapRect.left + Math.random() * pRect.width,
+          y: pY
+        });
+      }
+    }
+  });
+  
+  const pricingElements = document.querySelectorAll('.quest-pricing');
+  pricingElements.forEach(pricing => {
+    const pricingRect = pricing.getBoundingClientRect();
+    const pricingY = pricingRect.top - mapRect.top + (pricingRect.height / 2);
+    if (pricingY >= minY && pricingY <= maxY) {
+      possibleTargets.push({
+        x: pricingRect.left - mapRect.left + Math.random() * pricingRect.width,
+        y: pricingY
+      });
+    }
+  });
+  
+  if (possibleTargets.length === 0) {
+    return {
+      x: 400 + Math.random() * 100,
+      y: maxY
+    };
   }
   
-  // Create smoke puff at recovery position
-  createSmokePuff(nearest.x, nearest.y);
+  return possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+}
+
+function recoverGoblin() {
+  // This function is now just a backup - the full sequence is in animateFall
+  console.log('recoverGoblin backup called - should not happen');
+  const container = document.getElementById('goblinContainer');
+  container.style.display = 'flex';
+  container.style.opacity = '1';
+  isFalling = false;
 }
 
 function updateQuestVisuals() {
@@ -1276,7 +1517,10 @@ function updateQuestVisuals() {
   path.setAttribute('d', d);
 
   // skip position updates during fall sequence
-  if (isFalling) return;
+  if (isFalling) {
+    console.log('Skipping position update - currently falling');
+    return;
+  }
 
   const windowHeight = window.innerHeight;
   let progress = (windowHeight / 2 - mapRect.top) / mapRect.height;
@@ -1286,11 +1530,18 @@ function updateQuestVisuals() {
   const currentDistance = progress * totalLength;
   const point = path.getPointAtLength(currentDistance);
   
+  // Always ensure proper positioning and visibility
   container.style.left = `${point.x}px`;
   container.style.top = `${point.y}px`;
-  container.style.display = 'flex';
-  container.style.opacity = '1';
-  container.style.transform = 'translate(-50%, -50%)';
+  
+  // Only set display and opacity if not in a special state
+  if (!container.dataset.falling) {
+    container.style.display = 'flex';
+    container.style.opacity = '1';
+    container.style.transform = 'translate(-50%, -50%)';
+  }
+  
+  console.log('Normal update - position:', {x: point.x, y: point.y, display: container.style.display, opacity: container.style.opacity});
   
   // get sprites
   const goblinRight = document.getElementById('goblinRight');
