@@ -604,7 +604,7 @@ p, li {
 }
 
 .quest-pricing {
-  text-align: center;
+  text-align: left;
   margin-top: 1rem;
   padding: 0 1rem;
   font-size: clamp(0.9rem, 2.8vw, 1rem);
@@ -1091,6 +1091,15 @@ let goblinState = {
   fallStartPosition: null
 };
 
+// LERP smoothing for smooth scroll following
+let currentScrollProgress = 0;
+let targetScrollProgress = 0;
+const ease = 0.15; // Smoothing factor
+
+// Pre-calculated waypoints (calculated once, not every frame)
+let cachedWaypoints = [];
+let cachedMapRect = null;
+
 function createSmokePuff(x, y) {
   const smoke = document.createElement('div');
   smoke.className = 'smoke-puff';
@@ -1117,21 +1126,6 @@ function createSmokePuff(x, y) {
   document.getElementById('questMap').appendChild(smoke);
   
   setTimeout(() => smoke.remove(), 600);
-}
-
-function getNearestWaypoint(currentY, waypointPositions) {
-  let nearestIndex = 0;
-  let minDistance = Math.abs(currentY - waypointPositions[0].y);
-  
-  waypointPositions.forEach((pos, index) => {
-    const distance = Math.abs(currentY - pos.y);
-    if (distance < minDistance) {
-      minDistance = distance;
-      nearestIndex = index;
-    }
-  });
-  
-  return nearestIndex;
 }
 
 function calculateWaypoints() {
@@ -1169,10 +1163,6 @@ function getNearestWaypoint(scrollPosition, waypoints) {
   });
   
   return nearestIndex;
-}
-
-function updateGoblinPosition() {
-  updateQuestVisuals();
 }
 
 function handleFall() {
@@ -1223,56 +1213,71 @@ function handleFall() {
   bagStrap.style.top = (rect.top - mapRect.top) + 'px';
   bagStrap.style.opacity = '1';
 
-  // Find the "need" word in "need a custom build?" message
-  const pricingElements = document.querySelectorAll('.quest-pricing');
-  let needWordElement = null;
-  let needWordPosition = null;
+  // Find target words: "quotes", "vibe", or "goblins"
+  const targetWords = ['quotes', 'vibe', 'goblins'];
+  let foundTargets = [];
   
-  pricingElements.forEach(pricing => {
-    const text = pricing.textContent;
-    if (text.includes('need')) {
-      // Create a span wrapper around "need" if it doesn't exist
-      const html = pricing.innerHTML;
-      if (!html.includes('<span class="need-word">')) {
-        pricing.innerHTML = html.replace(/need/i, '<span class="need-word">need</span>');
+  // Search in pricing sections and CTA
+  const searchElements = [
+    ...document.querySelectorAll('.quest-pricing'),
+    document.querySelector('.cta h2')
+  ].filter(el => el);
+  
+  searchElements.forEach(element => {
+    const text = element.textContent.toLowerCase();
+    
+    targetWords.forEach(word => {
+      if (text.includes(word)) {
+        // Wrap the word if not already wrapped
+        const regex = new RegExp(`\\b(${word})\\b`, 'gi');
+        const html = element.innerHTML;
+        
+        if (!html.includes(`class="${word}-word"`)) {
+          element.innerHTML = html.replace(regex, `<span class="${word}-word">$1</span>`);
+        }
+        
+        const wordElement = element.querySelector(`.${word}-word`);
+        if (wordElement) {
+          const wordRect = wordElement.getBoundingClientRect();
+          foundTargets.push({
+            word: word,
+            x: wordRect.left - mapRect.left + (wordRect.width / 2),
+            y: wordRect.top - mapRect.top + (wordRect.height / 2),
+            element: wordElement
+          });
+        }
       }
-      needWordElement = pricing.querySelector('.need-word');
-      
-      if (needWordElement) {
-        const needRect = needWordElement.getBoundingClientRect();
-        needWordPosition = {
-          x: needRect.left - mapRect.left + (needRect.width / 2),
-          y: needRect.top - mapRect.top + (needRect.height / 2),
-          element: needWordElement
-        };
-      }
-    }
+    });
   });
   
-  // Fallback if "need" not found - use bottom of quest pricing
-  if (!needWordPosition && pricingElements.length > 0) {
-    const lastPricing = pricingElements[pricingElements.length - 1];
-    const pricingRect = lastPricing.getBoundingClientRect();
-    needWordPosition = {
-      x: pricingRect.left - mapRect.left + (pricingRect.width / 2),
-      y: pricingRect.top - mapRect.top + (pricingRect.height / 2),
-      element: lastPricing
-    };
+  console.log('Found landing targets:', foundTargets);
+  
+  // Pick random target for goblin and random for bag (can be different)
+  const goblinTarget = foundTargets[Math.floor(Math.random() * foundTargets.length)];
+  const bagTarget = foundTargets[Math.floor(Math.random() * foundTargets.length)];
+  
+  if (!goblinTarget || !bagTarget) {
+    console.error('No landing targets found!');
+    isFalling = false;
+    return;
   }
   
-  console.log('Landing target (need word):', needWordPosition);
-  
-  // Calculate landing positions - both land near "need" with slight variation
+  // Calculate landing positions with slight variation
   const goblinLandPos = {
-    x: needWordPosition.x + (Math.random() - 0.5) * 40,
-    y: needWordPosition.y,
-    impactElement: needWordPosition.element
+    x: goblinTarget.x + (Math.random() - 0.5) * 20,
+    y: goblinTarget.y,
+    impactElement: goblinTarget.element,
+    word: goblinTarget.word
   };
   
   const bagLandPos = {
-    x: needWordPosition.x + (Math.random() - 0.5) * 60,
-    y: needWordPosition.y + (Math.random() - 0.5) * 20
+    x: bagTarget.x + (Math.random() - 0.5) * 30,
+    y: bagTarget.y + (Math.random() - 0.5) * 10,
+    impactElement: bagTarget.element,
+    word: bagTarget.word
   };
+
+  console.log('Goblin landing on:', goblinTarget.word, 'Bag landing on:', bagTarget.word);
 
   // Heavy fall animation
   animateFall(container, bag, goblinLandPos, bagLandPos, fallStartX, fallStartY);
@@ -1687,46 +1692,27 @@ function recoverGoblin() {
   isFalling = false;
 }
 
-function updateQuestVisuals() {
+// Pre-calculate waypoints and draw path (called once on load and resize)
+function precalculateWaypoints() {
   const path = document.getElementById('questPath');
   const items = document.querySelectorAll('.quest-item');
-  const container = document.getElementById('goblinContainer');
-  const tracker = document.getElementById('goblinTracker');
   const map = document.getElementById('questMap');
-  const isMobile = window.innerWidth < 600;
   
-  if (!path || items.length === 0) return;
-
-  const mapRect = map.getBoundingClientRect();
-  const currentScrollY = window.pageYOffset;
+  if (!path || !map || items.length === 0) return;
   
-  // track direction changes for fall trigger
-  if (!isFalling && !isRecovering) {
-    const currentDirection = currentScrollY > lastScrollY ? 'down' : 'up';
-    
-    if (currentDirection !== lastDirection && lastDirection !== null) {
-      directionChanges++;
-      
-      clearTimeout(directionTimer);
-      directionTimer = setTimeout(() => { directionChanges = 0; }, 500);
-      
-      if (directionChanges > 20) {
-        handleFall();
-      }
-    }
-    lastDirection = currentDirection;
-  }
+  cachedMapRect = map.getBoundingClientRect();
+  cachedWaypoints = calculateWaypoints();
   
-  // Create waypoint dots positioned exactly on the vertical line
   const centerX = 15; // Left side for both mobile and desktop
   
   // Remove any existing dots
   document.querySelectorAll('.waypoint-dot').forEach(dot => dot.remove());
   
+  // Create waypoint dots
   items.forEach((item) => {
     const h3 = item.querySelector('h3');
     const h3Rect = h3.getBoundingClientRect();
-    const y = h3Rect.top - mapRect.top + (h3Rect.height / 2);
+    const y = h3Rect.top - cachedMapRect.top + (h3Rect.height / 2);
     
     const dot = document.createElement('div');
     dot.className = 'waypoint-dot';
@@ -1735,68 +1721,99 @@ function updateQuestVisuals() {
     map.appendChild(dot);
   });
   
-  let points = [];
-  
-  const waypoints = calculateWaypoints();
-  
-  // Create straight vertical line - all waypoints at same X position
-  waypoints.forEach(wp => {
-    points.push({x: centerX, y: wp.y});
-  });
-
+  // Draw the path line
+  let points = cachedWaypoints.map(wp => ({x: centerX, y: wp.y}));
   let d = `M ${points[0].x} ${points[0].y}`;
   for(let i = 1; i < points.length; i++) {
     d += ` L ${points[i].x} ${points[i].y}`;
   }
   path.setAttribute('d', d);
+}
 
-  // skip position updates during fall sequence
-  if (isFalling) {
-    console.log('Skipping position update - currently falling');
-    return;
+// Update scroll target (called on scroll event - lightweight)
+function updateScrollTarget() {
+  // Skip entirely if falling or recovering
+  if (isFalling || isRecovering) return;
+  
+  const currentScrollY = window.pageYOffset;
+  
+  // track direction changes for fall trigger
+  const currentDirection = currentScrollY > lastScrollY ? 'down' : 'up';
+  
+  if (currentDirection !== lastDirection && lastDirection !== null) {
+    directionChanges++;
+    
+    clearTimeout(directionTimer);
+    directionTimer = setTimeout(() => { directionChanges = 0; }, 500);
+    
+    if (directionChanges > 20) {
+      handleFall();
+    }
   }
-
-  const windowHeight = window.innerHeight;
-  let progress = (windowHeight / 2 - mapRect.top) / mapRect.height;
-  progress = Math.max(0, Math.min(1, progress));
-
-  const totalLength = path.getTotalLength();
-  const currentDistance = progress * totalLength;
-  const point = path.getPointAtLength(currentDistance);
-  
-  // Always ensure proper positioning and visibility
-  container.style.left = `${point.x}px`;
-  container.style.top = `${point.y}px`;
-  
-  // Only set display and opacity if not in a special state
-  if (!container.dataset.falling) {
-    container.style.display = 'flex';
-    container.style.opacity = '1';
-    container.style.transform = 'translate(-50%, -50%)';
-  }
-  
-  console.log('Normal update - position:', {x: point.x, y: point.y, display: container.style.display, opacity: container.style.opacity});
-  
-  // get sprites
-  const goblinRight = document.getElementById('goblinRight');
-  const goblinLeft = document.getElementById('goblinLeft');
-  const goblinNoBag = document.getElementById('goblinNoBag');
-  
-  // ALWAYS face right - only show normal sprites if not falling
-  if (!isFalling) {
-    goblinNoBag.style.display = 'none';
-    goblinRight.style.display = 'block';
-    goblinLeft.style.display = 'none';
-  }
-
-  tracker.classList.add('goblin-walking');
-  
-  clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(() => {
-    tracker.classList.remove('goblin-walking');
-  }, 100);
+  lastDirection = currentDirection;
   
   lastScrollY = currentScrollY;
+  
+  // Calculate target scroll progress using LIVE map position
+  const map = document.getElementById('questMap');
+  if (map && cachedWaypoints.length > 0) {
+    const mapRect = map.getBoundingClientRect(); // Get CURRENT position
+    const windowHeight = window.innerHeight;
+    targetScrollProgress = (windowHeight / 2 - mapRect.top) / mapRect.height;
+    targetScrollProgress = Math.max(0, Math.min(1, targetScrollProgress));
+  }
+}
+
+// Smooth animation loop using requestAnimationFrame
+function smoothGoblinMove() {
+  // Skip ALL updates during fall sequence - let fall animation have full control
+  if (!isFalling && !isRecovering) {
+    // LERP: smoothly interpolate current toward target
+    currentScrollProgress += (targetScrollProgress - currentScrollProgress) * ease;
+    
+    const container = document.getElementById('goblinContainer');
+    const path = document.getElementById('questPath');
+    
+    if (container && path && cachedWaypoints.length > 0) {
+      const totalLength = path.getTotalLength();
+      const currentDistance = currentScrollProgress * totalLength;
+      const point = path.getPointAtLength(currentDistance);
+      
+      container.style.left = `${point.x}px`;
+      container.style.top = `${point.y}px`;
+      container.style.display = 'flex';
+      container.style.opacity = '1';
+      container.style.transform = 'translate(-50%, -50%)';
+      
+      // get sprites
+      const goblinRight = document.getElementById('goblinRight');
+      const goblinLeft = document.getElementById('goblinLeft');
+      const goblinNoBag = document.getElementById('goblinNoBag');
+      
+      // ALWAYS face right - only show normal sprites if not falling
+      if (goblinRight && goblinLeft && goblinNoBag) {
+        goblinNoBag.style.display = 'none';
+        goblinRight.style.display = 'block';
+        goblinLeft.style.display = 'none';
+      }
+    }
+  }
+  
+  // Continue the animation loop
+  requestAnimationFrame(smoothGoblinMove);
+}
+
+// Keep the scroll timeout for walking animation
+function handleScrollAnimation() {
+  const tracker = document.getElementById('goblinTracker');
+  if (tracker) {
+    tracker.classList.add('goblin-walking');
+    
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      tracker.classList.remove('goblin-walking');
+    }, 100);
+  }
   
   // Handle nav hide/show
   const nav = document.querySelector('.footer-nav');
@@ -1843,8 +1860,25 @@ window.addEventListener('load', () => {
   lastScrollY = window.pageYOffset;
   setTimeout(updateQuestVisuals, 100);
 });
-window.addEventListener('resize', updateQuestVisuals);
-window.addEventListener('scroll', updateQuestVisuals);
+// Initialize after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Initializing goblin system...');
+  precalculateWaypoints();
+  smoothGoblinMove(); // Start the animation loop
+  console.log('Goblin system initialized');
+});
+
+// Update scroll target on scroll (lightweight)
+window.addEventListener('scroll', () => {
+  updateScrollTarget();
+  handleScrollAnimation();
+});
+
+// Recalculate on resize
+window.addEventListener('resize', () => {
+  precalculateWaypoints();
+  cachedMapRect = document.getElementById('questMap')?.getBoundingClientRect();
+});
 </script>
 
 </body>
