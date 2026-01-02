@@ -93,7 +93,7 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.7;margin-bottom:1rem;color
 .quest-line-path{fill:none;stroke:#7bbf7b;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:6 6;opacity:0.4}
 .waypoint-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:#7bbf7b;box-shadow:0 0 6px rgba(123,191,123,0.6);z-index:5;transform:translate(-50%,-50%);pointer-events:none}
 #goblinContainer{position:absolute;z-index:20;pointer-events:auto;display:flex;flex-direction:row;align-items:center;transform:translate(-50%,-50%);transition:none;cursor:default}
-#goblinTracker{width:36px;height:36px;transition:transform 0.1s,filter 0.15s ease-out}
+#goblinTracker{width:36px;height:36px;transition:transform 0.1s,filter 0.15s ease-out;pointer-events:auto;cursor:default}
 #goblinTracker svg{width:100%;height:100%;image-rendering:pixelated;display:block}
 
 @keyframes goblinBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -157,14 +157,14 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.7;margin-bottom:1rem;color
 <div class="hero">
 <h1>definitely not three goblins in a trenchcoat</h1>
 <p style="margin-top:2.5rem">yes, hello. this is noah. please ignore the shifting height; nothing to see here.</p>
-<p><span id="subject">we<svg id="strikethrough-svg" viewBox="0 0 30 8" preserveAspectRatio="none"><path d="M0 4 Q15 3.8, 26 4 Q28 3, 30 2.5" fill="none" stroke="#7bbf7b" stroke-width="1.6" stroke-linecap="round"/></svg></span><span id="new-subject"><svg viewBox="0 0 12 20" width="10" height="16" style="vertical-align:baseline;margin-bottom:-2px"><path class="i-stalk" d="M5 8c0.3-0.2 0.8-0.1 1 0.2 0.5 0.8 0.3 2.5 0.2 4-0.1 1.5-0.3 3.2 0.1 4.5 0.1 0.4 0.3 0.8 0.2 1.2-0.2 0.5-0.8 0.3-1.1 0-0.4-0.4-0.5-1-0.5-1.6 0-1.4 0.2-2.8 0.3-4.2 0.1-1.2 0.2-2.6-0.2-3.6-0.1-0.2 0-0.4 0-0.5z" fill="#7bbf7b" stroke="#7bbf7b" stroke-width="0.5" stroke-linecap="round"/><path class="i-dot" d="M6 5.5c0.8 0 1.5-0.6 1.6-1.4 0.1-0.9-0.5-1.6-1.3-1.7-0.9-0.1-1.7 0.5-1.8 1.3-0.1 0.9 0.6 1.7 1.5 1.8z" fill="#7bbf7b"/></svg></span> <span>run</span> an editorial and creative outfit from a dimly lit, well-guarded workshop in london. with 5+ years of big four publishing experience and counting, i apply industry grit to stress-test your project and ensure it is ready to cause trouble in the market. i specialise in:</p>
+<p><span id="subject">we<svg id="strikethrough-svg" viewBox="0 0 30 8" preserveAspectRatio="none"><path d="M0 4 Q15 3.8, 26 4 Q28 3, 30 2.5" fill="none" stroke="#7bbf7b" stroke-width="1.6" stroke-linecap="round"/></svg></span><span id="new-subject"><svg viewBox="0 0 12 20" width="10" height="16" style="vertical-align:baseline;margin-bottom:-2px"><path class="i-stalk" d="M5 8c0.3-0.2 0.8-0.1 1 0.2 0.5 0.8 0.3 2.5 0.2 4-0.1 1.5-0.3 3.2 0.1 4.5 0.1 0.4 0.3 0.8 0.2 1.2-0.2 0.5-0.8 0.3-1.1 0-0.4-0.4-0.5-1-0.5-1.6 0-1.4 0.2-2.8 0.3-4.2 0.1-1.2 0.2-2.6-0.2-3.6-0.1-0.2 0-0.4 0-0.5z" fill="#7bbf7b" stroke="#7bbf7b" stroke-width="0.5" stroke-linecap="round"/><path class="i-dot" d="M6 5.5c0.8 0 1.5-0.6 1.6-1.4 0.1-0.9-0.5-1.6-1.3-1.7-0.9-0.1-1.7 0.5-1.8 1.3-0.1 0.9 0.6 1.7 1.5 1.8z" fill="#7bbf7b"/></svg></span> <span>run</span> an editorial and creative outfit from a dimly lit, well-guarded workshop in london. with 5+ years of big four publishing experience and counting, i apply industry grit to stress-test your project and ensure it is ready to cause trouble in the market.<br><br>i specialise in:</p>
 <p>• speculative fiction, especially sci-fi, fantasy, horror, romance and genre blends<br>• graphic novels and comic books<br>• video games: character, narrative design, dialogue, environmental storytelling<br>• lore: technical and worldbuilding guides for board and card games<br>• wordy projects, from bitesize blurbs to multi-layered narrative beasts</p>
 <p class="genre-avoid-text">note: the goblins cannot digest literary fiction, poetry or non-fiction.</p>
 </div>
 <div class="section crew-section">
 <h2>meet the team</h2>
 <div class="crew-grid">
-<div class="crew-member"><h3>editorial goblin</h3><p>refines what is already working. handles character arcs, pacing, structure and voice to make sure your story <em>feels</em> right.</p></div>
+<div class="crew-member"><h3>editorial goblin</h3><p>refines what is already working. handles character arcs, pacing, structure and voice to make sure your project <em>feels</em> right.</p></div>
 <div class="crew-member"><h3>creative goblin</h3><p>imagines what is possible. fizzes with curiosity, energy and radical thinking for when you're stuck. expect new ideas and perspectives you never saw coming.</p></div>
 <div class="crew-member"><h3>marketing goblin</h3><p>amplifies what is impossible to ignore. brand identity, copywriting, pitches, positioning. one-liners that hit like a well-aimed goblin brick.</p></div>
 </div>
