@@ -45,7 +45,12 @@ h2{font-size:clamp(1rem,3.5vw,1.4rem);margin-top:2rem;margin-bottom:1rem;color:#
 h3{font-size:clamp(0.75rem,2.5vw,0.95rem);margin-top:0;margin-bottom:0.5rem;color:rgba(255,255,255,0.7)}
 .quest-item h3{color:#7bbf7b}
 .service-tag{color:#888;font-weight:normal}
-.read-more{display:block;color:#7bbf7b;text-decoration:none;font-size:0.85rem;font-family:'Space Mono',monospace;transition:all 0.2s;margin-top:0.15rem}
+.read-more{display:inline;color:#7bbf7b;text-decoration:none;font-size:1rem;font-family:system-ui,-apple-system,sans-serif;transition:all 0.2s;margin-left:6px;position:relative;top:1px;letter-spacing:0px;animation:arrowGlint 12s ease-in-out infinite;animation-delay:var(--glint-delay,0s)}
+.quest-item:nth-child(1) .read-more{--glint-delay:3s}
+.quest-item:nth-child(2) .read-more{--glint-delay:9s}
+.quest-item:nth-child(3) .read-more{--glint-delay:6s}
+.quest-item:nth-child(4) .read-more{--glint-delay:15s}
+@keyframes arrowGlint{0%,96%,100%{color:#7bbf7b;text-shadow:none}97%{color:#a8e6a8;text-shadow:0 0 4px rgba(123,191,123,0.4)}98%{color:#7bbf7b;text-shadow:none}}
 .read-more .arrow{display:inline-block;vertical-align:baseline;position:relative;top:2px;margin-left:0.2em}
 .read-more:hover{color:#7bbf7b;text-shadow:0 0 8px rgba(123,191,123,0.8)}
 p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color:rgba(255,255,255,0.85)}
@@ -106,7 +111,7 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color
 .smoke-puff{position:absolute;width:40px;height:40px;z-index:12;pointer-events:none;transform:translate(-50%,-50%)}
 .smoke-particle{position:absolute;width:4px;height:4px;background:#888;opacity:0.8;image-rendering:pixelated}
 @keyframes smokeDissipate{0%{transform:scale(1);opacity:0.8}100%{transform:scale(3);opacity:0}}
-.quest-item{position:relative;width:100%;max-width:600px;margin-bottom:1.5rem;z-index:1;align-self:flex-start;text-align:left;padding-left:3rem}
+.quest-item{position:relative;width:100%;margin-bottom:1.5rem;z-index:1;align-self:flex-start;text-align:left;padding-left:3rem}
 .quest-item h3{color:#7bbf7b;margin-bottom:0.25rem;font-size:clamp(0.85rem,2.8vw,1.05rem);position:relative;padding-left:0;padding-right:0}
 .quest-item .service-tag{display:block;color:#888;font-size:clamp(0.75rem,2.5vw,0.92rem);margin-bottom:0.5rem;font-family:'PressStart2P',monospace}
 .quest-tag{display:block;font-family:'PressStart2P',monospace;font-size:0.65rem;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;margin-top:0.25rem}
@@ -162,10 +167,10 @@ p,li{font-size:clamp(0.9rem,2.8vw,1rem);line-height:1.9;margin-bottom:1rem;color
 </div></div>
 <div id="bagSprite"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><path fill="#8B4513" d="M1 5h4v1H1z"/><path fill="#8B4513" d="M0 6h5v1H0z"/><path fill="#8B4513" d="M0 7h5v3H0z"/><path fill="#8B4513" d="M1 10h4v1H1z"/><path fill="#654321" d="M1 6h4v1H1z"/><path fill="#654321" d="M0 9h5v1H0z"/></svg></div>
 <div id="bagStrap"><svg viewBox="0 0 16 20" shape-rendering="crispEdges"><path fill="#654321" d="M5 5h1v1H5z"/><path fill="#654321" d="M6 6h2v1H6z"/><path fill="#654321" d="M8 7h2v1H8z"/><path fill="#654321" d="M10 8h1v1h-1z"/><path fill="#654321" d="M11 9h1v1h-1z"/><path fill="#654321" d="M12 10h1v1h-1z"/></svg></div>
-<div class="quest-item"><h3>coffee</h3><p>you want to meet the goblins. no gold required.</p><a href="#" class="read-more">read more<span class="arrow">></span></a></div>
-<div class="quest-item"><h3>creative development</h3><p>you're brainstorming. so many possibilities. let's make sure you aren't building on a swamp.</p><a href="#" class="read-more">read more<span class="arrow">></span></a></div>
-<div class="quest-item"><h3>editorial assessment</h3><p>you're drafting. this might be the hardest part. we'll align execution with creative ambition.</p><a href="#" class="read-more">read more<span class="arrow">></span></a></div>
-<div class="quest-item"><h3>pitch feedback</h3><p>your project is ready. but are you? <span style="white-space:nowrap">it's time to nail the package.</span></p><a href="#" class="read-more">read more<span class="arrow">></span></a></div>
+<div class="quest-item"><h3>coffee</h3><p>you want to meet the goblins. no gold required<a href="#" class="read-more">›››</a></p></div>
+<div class="quest-item"><h3>creative development</h3><p>you're brainstorming. so many possibilities. let's make sure you aren't building on a swamp<a href="#" class="read-more">›››</a></p></div>
+<div class="quest-item"><h3>editorial assessment</h3><p>you're drafting. this might be the hardest part. we'll align execution with creative ambition<a href="#" class="read-more">›››</a></p></div>
+<div class="quest-item"><h3>pitch feedback</h3><p>your project is ready. but are you? it's time to nail the package<a href="#" class="read-more">›››</a></p></div>
 </div>
 <div class="quest-pricing"><span class="landing-word">need</span> a <span class="landing-word">custom</span> <span class="landing-word">build</span>? <span class="landing-word">get</span> in <span class="landing-word">touch</span> to <span class="landing-word">discuss</span>.</div>
 <div class="quest-pricing">for <span class="landing-word">manuscripts</span> and <span class="landing-word">long-form</span> <span class="landing-word">texts</span>, we'll <span class="landing-word">start</span> with a <span class="landing-word">relaxed</span>, no-pressure <span class="landing-word">chat</span>: i <span class="landing-word">work</span> with <span class="landing-word">creators</span> where i am the <span class="landing-word">right</span> <span class="landing-word">fit</span> and have the <span class="landing-word">capacity</span> to do the <span class="landing-word">project</span> <span class="landing-word">justice</span> around my <span class="landing-word">role</span> in <span class="landing-word">publishing</span>, about which i will be <span class="landing-word">transparent</span>. if we both want to <span class="landing-word">proceed</span>, we can <span class="landing-word">settle</span> on a <span class="landing-word">fee</span> that <span class="landing-word">suits</span> us (and the <span class="landing-word">goblins</span>) based on <span class="landing-word">length</span> and <span class="landing-word">complexity</span>.</div>
