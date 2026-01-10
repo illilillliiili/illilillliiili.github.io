@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>press for goblins</title>
+<meta name="title" content="press for goblins">
+<meta name="description" content="london-based editorial and creative workshop for authors who write speculative and strange. science fiction, fantasy, horror, romance.">
+<link rel="canonical" href="https://pressforgoblins.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pressforgoblins.com/">
+<meta property="og:title" content="press for goblins">
+<meta property="og:description" content="london-based editorial and creative workshop for authors who write speculative and strange. science fiction, fantasy, horror, romance.">
+<meta property="og:image" content="https://pressforgoblins.com/images/og-image.png">
+<link rel="preload" href="fonts/PressStart2P-Regular.woff2?v=30" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@font-face {
+    font-family: 'PressStart2P';
+    src: url('fonts/PressStart2P-Regular.woff2?v=30') format('woff2'),
+         url('fonts/PressStart2P-Regular.woff?v=30') format('woff'),
+         url('fonts/PressStart2P-Regular.ttf?v=30') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 115%; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #000;
+    font-family: 'Space Mono', 'Courier New', monospace;
+    color: #888;
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(to top, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 80%, rgba(255,255,255,0) 100%);
+    animation: verticalGlow 25s linear infinite;
+}
+
+@keyframes verticalGlow {
+    0% { transform: translateY(110%); opacity: 0.35; }
+    50% { opacity: 0.6; }
+    100% { transform: translateY(-110%); opacity: 0.35; }
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px);
+    opacity: 0.15;
+}
+
+.container {
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+h1 {
+    font-family: 'PressStart2P', monospace;
+    color: #7bbf7b;
+    font-weight: normal;
+    line-height: 1.6;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    margin-bottom: 2.5rem;
+    animation: letterJitter 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes letterJitter {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(1px); }
+}
+
+p {
+    font-size: clamp(0.9rem, 2.8vw, 1rem);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    color: rgba(255,255,255,0.85);
+}
+
+.services { color: #7bbf7b; font-weight: 700; }
+.genres { font-style: italic; }
+
+.cta { margin-top: 2.5rem; }
+
+.cta a {
+    font-family: 'PressStart2P', monospace;
+    color: #7bbf7b;
+    text-decoration: none;
+    font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+    transition: all 0.2s ease;
+    display: inline-block;
+    padding: 1rem 0;
+}
+
+.cta a:hover {
+    text-shadow: 0 0 8px rgba(123,191,123,0.6);
+    color: #a8e6a8;
+}
+
+.landing-word { display: inline; }
+
+.goblin-area {
+    margin-bottom: 2rem;
+    height: 60px;
+    position: relative;
+}
+
+#goblinContainer {
+    position: absolute;
+    left: 50%;
+    top: 30px;
+    z-index: 20;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    will-change: transform, left, top;
+}
+
+#goblinTracker {
+    width: 48px;
+    height: 48px;
+    pointer-events: auto;
+    cursor: default;
+    will-change: transform;
+}
+
+#goblinTracker svg {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.goblin-idle #goblinTracker { animation: goblinBob 1.5s ease-in-out infinite; }
+
+@keyframes goblinBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.goblin-wobble-1 #goblinTracker { animation: wobble1 0.5s ease-in-out; }
+.goblin-wobble-2 #goblinTracker { animation: wobble2 0.5s ease-in-out; }
+.goblin-wobble-3 #goblinTracker { animation: wobble3 0.6s ease-in-out; }
+.goblin-wobble-4 #goblinTracker { animation: wobble4 0.7s ease-in-out; }
+.goblin-wobble-5 #goblinTracker { animation: wobble5 0.8s ease-in-out; }
+
+@keyframes wobble1 { 
+    0%, 100% { transform: rotate(0deg) translateX(0); } 
+    50% { transform: rotate(-1.5deg) translateX(-1px); } 
+}
+@keyframes wobble2 { 
+    0%, 100% { transform: rotate(0deg) translateX(0); } 
+    30% { transform: rotate(-2.5deg) translateX(-2px); } 
+    70% { transform: rotate(2deg) translateX(1px); } 
+}
+@keyframes wobble3 { 
+    0%, 100% { transform: rotate(0deg) translateX(0); } 
+    25% { transform: rotate(-4deg) translateX(-3px); } 
+    50% { transform: rotate(1deg) translateX(1px); }
+    75% { transform: rotate(3deg) translateX(2px); } 
+}
+@keyframes wobble4 { 
+    0%, 100% { transform: rotate(0deg) translateX(0); } 
+    20% { transform: rotate(-6deg) translateX(-4px); } 
+    40% { transform: rotate(2deg) translateX(2px); } 
+    60% { transform: rotate(5deg) translateX(3px); } 
+    80% { transform: rotate(-2deg) translateX(-1px); } 
+}
+@keyframes wobble5 { 
+    0%, 100% { transform: rotate(0deg) translateX(0); } 
+    15% { transform: rotate(-8deg) translateX(-5px); } 
+    30% { transform: rotate(3deg) translateX(2px); } 
+    45% { transform: rotate(7deg) translateX(4px); } 
+    60% { transform: rotate(-3deg) translateX(-2px); } 
+    75% { transform: rotate(5deg) translateX(3px); }
+    90% { transform: rotate(-1deg) translateX(-1px); }
+}
+
+.goblin-losing-balance #goblinTracker { animation: loseBalance 0.9s ease-in-out forwards; }
+
+@keyframes loseBalance {
+    0% { transform: rotate(0deg) translateX(0); }
+    12% { transform: rotate(-10deg) translateX(-8px); }
+    24% { transform: rotate(12deg) translateX(10px); }
+    36% { transform: rotate(-14deg) translateX(-12px); }
+    48% { transform: rotate(16deg) translateX(14px); }
+    60% { transform: rotate(-12deg) translateX(-10px); }
+    72% { transform: rotate(18deg) translateX(12px); }
+    84% { transform: rotate(-8deg) translateX(-6px); }
+    100% { transform: rotate(20deg) translateX(8px); }
+}
+
+.goblin-falling #goblinTracker { animation: goblinFall 0.5s ease-in forwards; }
+@keyframes goblinFall { 0% { transform: rotate(0deg); } 100% { transform: rotate(90deg); } }
+
+.goblin-death-pose #goblinTracker { transform: rotate(90deg); }
+
+.goblin-crawling #goblinTracker { animation: crawl 0.3s linear infinite; }
+@keyframes crawl { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+
+#bagSprite, #bagStrap {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    z-index: 11;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, left, top, opacity;
+}
+
+#bagSprite svg, #bagStrap svg {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+#bagStrap { height: 56px; z-index: 9; }
+
+.smoke-puff {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    z-index: 100;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+.smoke-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #888;
+    opacity: 0.8;
+    image-rendering: pixelated;
+}
+
+@keyframes smokeDissipate {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+@keyframes impactShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px) rotate(-1deg); }
+    50% { transform: translateX(4px) rotate(1deg); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+.impact-effect { animation: impactShake 0.4s cubic-bezier(.36,.07,.19,.97) both; display: inline-block; }
+
+@keyframes impactShakeLight {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-1px) rotate(-0.3deg); }
+    50% { transform: translateX(1px) rotate(0.3deg); }
+    75% { transform: translateX(-0.5px); }
+    100% { transform: translateX(0); }
+}
+.impact-effect-light { animation: impactShakeLight 0.3s cubic-bezier(.36,.07,.19,.97) both; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="goblin-area" id="goblinArea">
+        <div id="goblinContainer" class="goblin-idle">
+            <div id="goblinTracker">
+                <svg id="goblinRight" viewBox="0 0 16 16" shape-rendering="crispEdges">
+                    <path fill="#7bbf7b" d="M6 1h5v1H6z"/><path fill="#7bbf7b" d="M5 2h6v1H5z"/>
+                    <path fill="#7bbf7b" d="M5 3h7v2H5z"/><path fill="#7bbf7b" d="M3 3h2v2H3z"/>
+                    <path fill="#5a9d5a" d="M3 4h1v1H3z"/><path fill="#0d0d0d" d="M7 3h1v1H7zM10 3h1v1h-1z"/>
+                    <path fill="#5a9d5a" d="M9 4h2v1H9z"/><path fill="#8B4513" d="M1 5h4v1H1z"/>
+                    <path fill="#8B4513" d="M0 6h5v1H0z"/><path fill="#8B4513" d="M0 7h5v3H0z"/>
+                    <path fill="#8B4513" d="M1 10h4v1H1z"/><path fill="#654321" d="M1 6h4v1H1z"/>
+                    <path fill="#654321" d="M0 9h5v1H0z"/><path fill="#7bbf7b" d="M5 5h6v1H5z"/>
+                    <path fill="#7bbf7b" d="M5 6h6v4H5z"/><path fill="#5a9d5a" d="M6 7h4v1H6z"/>
+                    <path fill="#654321" d="M5 5h1v1H5z"/><path fill="#654321" d="M6 6h2v1H6z"/>
+                    <path fill="#654321" d="M8 7h2v1H8z"/><path fill="#654321" d="M10 8h1v1h-1z"/>
+                    <path fill="#7bbf7b" d="M4 7h2v2H4z"/><path fill="#7bbf7b" d="M11 6h1v2h-1z"/>
+                    <path fill="#7bbf7b" d="M6 10h2v1H6z"/><path fill="#7bbf7b" d="M6 11h1v1H6z"/>
+                    <path fill="#7bbf7b" d="M6 12h1v1H6z"/><path fill="#7bbf7b" d="M9 10h2v1H9z"/>
+                    <path fill="#7bbf7b" d="M9 11h1v1H9z"/><path fill="#7bbf7b" d="M9 12h1v1H9z"/>
+                </svg>
+                <svg id="goblinLeft" viewBox="0 0 16 16" shape-rendering="crispEdges" style="opacity:0;">
+                    <path fill="#7bbf7b" d="M5 1h5v1H5z"/><path fill="#7bbf7b" d="M5 2h6v1H5z"/>
+                    <path fill="#7bbf7b" d="M4 3h7v2H4z"/><path fill="#7bbf7b" d="M11 3h2v2h-2z"/>
+                    <path fill="#5a9d5a" d="M12 4h1v1h-1z"/><path fill="#0d0d0d" d="M5 3h1v1H5zM8 3h1v1H8z"/>
+                    <path fill="#5a9d5a" d="M5 4h2v1H5z"/><path fill="#8B4513" d="M11 5h4v1h-4z"/>
+                    <path fill="#8B4513" d="M11 6h5v1h-5z"/><path fill="#8B4513" d="M11 7h5v3h-5z"/>
+                    <path fill="#8B4513" d="M11 10h4v1h-4z"/><path fill="#654321" d="M11 6h4v1h-4z"/>
+                    <path fill="#654321" d="M11 9h5v1h-5z"/><path fill="#7bbf7b" d="M5 5h6v1H5z"/>
+                    <path fill="#7bbf7b" d="M5 6h6v4H5z"/><path fill="#5a9d5a" d="M6 7h4v1H6z"/>
+                    <path fill="#654321" d="M10 5h1v1h-1z"/><path fill="#654321" d="M8 6h2v1H8z"/>
+                    <path fill="#654321" d="M6 7h2v1H6z"/><path fill="#654321" d="M5 8h1v1H5z"/>
+                    <path fill="#7bbf7b" d="M10 7h2v2h-2z"/><path fill="#7bbf7b" d="M4 6h1v2H4z"/>
+                    <path fill="#7bbf7b" d="M5 10h2v1H5z"/><path fill="#7bbf7b" d="M6 11h1v1H6z"/>
+                    <path fill="#7bbf7b" d="M6 12h1v1H6z"/><path fill="#7bbf7b" d="M8 10h2v1H8z"/>
+                    <path fill="#7bbf7b" d="M9 11h1v1H9z"/><path fill="#7bbf7b" d="M9 12h1v1H9z"/>
+                </svg>
+                <svg id="goblinNoBag" viewBox="0 0 16 16" shape-rendering="crispEdges" style="opacity:0;">
+                    <path fill="#7bbf7b" d="M6 1h5v1H6z"/><path fill="#7bbf7b" d="M5 2h6v1H5z"/>
+                    <path fill="#7bbf7b" d="M5 3h7v2H5z"/><path fill="#7bbf7b" d="M3 3h2v2H3z"/>
+                    <path fill="#5a9d5a" d="M3 4h1v1H3z"/><path fill="#0d0d0d" d="M7 3h1v1H7zM10 3h1v1h-1z"/>
+                    <path fill="#5a9d5a" d="M9 4h2v1H9z"/><path fill="#7bbf7b" d="M5 5h6v1H5z"/>
+                    <path fill="#7bbf7b" d="M5 6h6v4H5z"/><path fill="#5a9d5a" d="M6 7h4v1H6z"/>
+                    <path fill="#7bbf7b" d="M4 7h2v2H4z"/><path fill="#7bbf7b" d="M11 6h1v2h-1z"/>
+                    <path fill="#7bbf7b" d="M6 10h2v1H6z"/><path fill="#7bbf7b" d="M6 11h1v1H6z"/>
+                    <path fill="#7bbf7b" d="M6 12h1v1H6z"/><path fill="#7bbf7b" d="M9 10h2v1H9z"/>
+                    <path fill="#7bbf7b" d="M9 11h1v1H9z"/><path fill="#7bbf7b" d="M9 12h1v1H9z"/>
+                </svg>
+            </div>
+        </div>
+        <div id="bagSprite">
+            <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+                <path fill="#8B4513" d="M1 5h4v1H1z"/><path fill="#8B4513" d="M0 6h5v1H0z"/>
+                <path fill="#8B4513" d="M0 7h5v3H0z"/><path fill="#8B4513" d="M1 10h4v1H1z"/>
+                <path fill="#654321" d="M1 6h4v1H1z"/><path fill="#654321" d="M0 9h5v1H0z"/>
+            </svg>
+        </div>
+        <div id="bagStrap">
+            <svg viewBox="0 0 16 20" shape-rendering="crispEdges">
+                <path fill="#654321" d="M5 5h1v1H5z"/><path fill="#654321" d="M6 6h2v1H6z"/>
+                <path fill="#654321" d="M8 7h2v1H8z"/><path fill="#654321" d="M10 8h1v1h-1z"/>
+                <path fill="#654321" d="M11 9h1v1h-1z"/><path fill="#654321" d="M12 10h1v1h-1z"/>
+            </svg>
+        </div>
+    </div>
+    <h1>press for goblins</h1>
+    <p><span class="landing-word">launching</span> <span class="landing-word">this</span> <span class="landing-word">year.</span></p>
+    <p><span class="landing-word">until</span> <span class="landing-word">then,</span> <span class="landing-word">i</span> <span class="landing-word">am</span> <span class="landing-word">taking</span> <span class="landing-word">on</span> <span class="landing-word">a</span> <span class="landing-word">limited</span> <span class="landing-word">number</span> <span class="landing-word">of</span> <span class="landing-word">manuscripts</span> <span class="landing-word">for</span> <span class="services landing-word">editorial</span> <span class="services landing-word">assessment,</span> <span class="services landing-word">creative</span> <span class="services landing-word">development</span> <span class="landing-word">and</span> <span class="services landing-word">pitch</span> <span class="services landing-word">feedback,</span> <span class="landing-word">specialising</span> <span class="landing-word">in</span> <span class="genres landing-word">queer-led</span> <span class="genres landing-word">sci-fi,</span> <span class="genres landing-word">fantasy,</span> <span class="genres landing-word">horror,</span> <span class="genres landing-word">romance</span> <span class="genres landing-word">and</span> <span class="genres landing-word">genre</span> <span class="genres landing-word">blends.</span></p>
+    <p><span class="landing-word">now</span> <span class="landing-word">accepting</span> <span class="landing-word">submissions.</span></p>
+    <div class="cta">
+        <a href="mailto:hello@pressforgoblins.com"><span class="landing-word">get</span> <span class="landing-word">in</span> <span class="landing-word">touch</span> ›››</a>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    var State = {
+        isFalling: false,
+        isRecovering: false,
+        clickCount: 0,
+        clickTimer: null,
+        animationFrame: null,
+        goblinX: 0,
+        goblinY: 0,
+        bagX: 0,
+        bagY: 0,
+        bagRotation: 0
+    };
+    
+    var El = {
+        area: document.getElementById('goblinArea'),
+        container: document.getElementById('goblinContainer'),
+        tracker: document.getElementById('goblinTracker'),
+        goblinRight: document.getElementById('goblinRight'),
+        goblinLeft: document.getElementById('goblinLeft'),
+        goblinNoBag: document.getElementById('goblinNoBag'),
+        bagSprite: document.getElementById('bagSprite'),
+        bagStrap: document.getElementById('bagStrap')
+    };
+    
+    function sleep(ms) {
+        return new Promise(function(r) { setTimeout(r, ms); });
+    }
+    
+    function createSmokePuff(screenX, screenY) {
+        var smoke = document.createElement('div');
+        smoke.className = 'smoke-puff';
+        smoke.style.left = screenX + 'px';
+        smoke.style.top = screenY + 'px';
+        
+        for (var i = 0; i < 16; i++) {
+            var p = document.createElement('div');
+            p.className = 'smoke-particle';
+            var angle = (i / 16) * Math.PI * 2;
+            var dist = 10 + Math.random() * 10;
+            p.style.left = (20 + Math.cos(angle) * dist) + 'px';
+            p.style.top = (20 + Math.sin(angle) * dist) + 'px';
+            p.style.animation = 'smokeDissipate ' + (0.4 + Math.random() * 0.2) + 's ease-out forwards';
+            smoke.appendChild(p);
+        }
+        
+        document.body.appendChild(smoke);
+        setTimeout(function() { smoke.remove(); }, 600);
+    }
+    
+    function shakeElement(el, light) {
+        if (!el) return;
+        el.style.display = 'inline-block';
+        el.classList.add(light ? 'impact-effect-light' : 'impact-effect');
+        setTimeout(function() {
+            el.classList.remove('impact-effect', 'impact-effect-light');
+        }, 400);
+    }
+    
+    function findTargets() {
+        var words = document.querySelectorAll('.landing-word');
+        var goblinRect = El.container.getBoundingClientRect();
+        var targets = [];
+        
+        words.forEach(function(w) {
+            var r = w.getBoundingClientRect();
+            if (r.top > goblinRect.bottom - 20) {
+                targets.push({ el: w, x: r.left + r.width/2, y: r.top + r.height/2 });
+            }
+        });
+        
+        return targets;
+    }
+    
+    function setGoblinPos(x, y) {
+        El.container.style.left = x + 'px';
+        El.container.style.top = y + 'px';
+    }
+    
+    function setBagPos(x, y, rotation) {
+        El.bagSprite.style.left = x + 'px';
+        El.bagSprite.style.top = y + 'px';
+        El.bagSprite.style.transform = 'translate(-50%, -50%)';
+        
+        El.bagStrap.style.left = x + 'px';
+        El.bagStrap.style.top = y + 'px';
+        El.bagStrap.style.transform = 'translate(-50%, -50%) rotate(' + rotation + 'deg)';
+    }
+    
+    function showGoblinWithBag() {
+        El.goblinRight.style.opacity = '1';
+        El.goblinLeft.style.opacity = '0';
+        El.goblinNoBag.style.opacity = '0';
+    }
+    
+    function showGoblinNoBag() {
+        El.goblinRight.style.opacity = '0';
+        El.goblinLeft.style.opacity = '0';
+        El.goblinNoBag.style.opacity = '1';
+    }
+    
+    function showGoblinNoBagLeft() {
+        El.goblinRight.style.opacity = '0';
+        El.goblinLeft.style.opacity = '0';
+        El.goblinNoBag.style.opacity = '1';
+        El.goblinNoBag.style.transform = 'scaleX(-1)';
+    }
+    
+    function showBag() {
+        El.bagSprite.style.opacity = '1';
+        El.bagStrap.style.opacity = '1';
+    }
+    
+    function hideBag() {
+        El.bagSprite.style.opacity = '0';
+        El.bagStrap.style.opacity = '0';
+    }
+    
+    async function doFall() {
+        if (State.isFalling || State.isRecovering) return;
+        State.isFalling = true;
+        
+        var targets = findTargets();
+        if (targets.length === 0) {
+            State.isFalling = false;
+            return;
+        }
+        
+        var areaRect = El.area.getBoundingClientRect();
+        var startRect = El.container.getBoundingClientRect();
+        
+        var startX = startRect.left + startRect.width/2 - areaRect.left;
+        var startY = startRect.top + startRect.height/2 - areaRect.top;
+        
+        var goblinTarget = targets[Math.floor(Math.random() * targets.length)];
+        var bagTarget = targets[Math.floor(Math.random() * targets.length)];
+        
+        var endGoblinX = goblinTarget.x - areaRect.left;
+        var endGoblinY = goblinTarget.y - areaRect.top;
+        var endBagX = bagTarget.x - areaRect.left;
+        var endBagY = bagTarget.y - areaRect.top;
+        
+        // Init positions
+        setGoblinPos(startX, startY);
+        
+        El.container.classList.remove('goblin-idle', 'goblin-wobble-1', 'goblin-wobble-2', 'goblin-wobble-3', 'goblin-wobble-4', 'goblin-wobble-5', 'goblin-losing-balance');
+        El.container.classList.add('goblin-falling');
+        
+        var duration = 1200;
+        var startTime = performance.now();
+        var bagSlipTime = 0.3; // 30% through fall
+        var bagStartX, bagStartY;
+        var bagSlipped = false;
+        
+        // Goblin falls straight down (same X), bag can drift slightly
+        var goblinFallX = startX; // Keep same X - fall straight down
+        var bagDriftX = endBagX; // Bag can land elsewhere
+        
+        // Position bag at goblin initially (hidden)
+        setBagPos(startX, startY, 0);
+        
+        await new Promise(function(resolve) {
+            function animate(now) {
+                var elapsed = now - startTime;
+                var t = Math.min(elapsed / duration, 1);
+                var ease = t * t; // gravity easing
+                
+                // Goblin falls straight down
+                var gx = goblinFallX;
+                var gy = startY + (endGoblinY - startY) * ease;
+                setGoblinPos(gx, gy);
+                
+                // Bag slips off at 30%
+                if (t >= bagSlipTime && !bagSlipped) {
+                    bagSlipped = true;
+                    bagStartX = gx;
+                    bagStartY = gy;
+                    showGoblinNoBag();
+                    showBag();
+                }
+                
+                // Animate bag after slip - bag can drift to its target
+                if (bagSlipped) {
+                    var bagT = (t - bagSlipTime) / (1 - bagSlipTime);
+                    var bagEase = bagT * bagT;
+                    
+                    var bx = bagStartX + (bagDriftX - bagStartX) * bagEase;
+                    var by = bagStartY + (endBagY - bagStartY) * bagEase;
+                    var rotation = bagT * 180;
+                    
+                    setBagPos(bx, by, rotation);
+                }
+                
+                if (t < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve();
+                }
+            }
+            requestAnimationFrame(animate);
+        });
+        
+        // Final positions - goblin at straight-down position
+        var finalGoblinX = goblinFallX;
+        var finalGoblinY = endGoblinY;
+        setGoblinPos(finalGoblinX, finalGoblinY);
+        setBagPos(endBagX, endBagY, 180);
+        
+        El.container.classList.remove('goblin-falling');
+        El.container.classList.add('goblin-death-pose');
+        
+        shakeElement(goblinTarget.el, false);
+        shakeElement(bagTarget.el, true);
+        
+        await sleep(2500);
+        
+        El.container.classList.remove('goblin-death-pose');
+        
+        // Face toward bag
+        var dx = endBagX - finalGoblinX;
+        var dy = endBagY - finalGoblinY;
+        if (dx < 0) {
+            showGoblinNoBagLeft();
+        }
+        
+        // Crawl to bag
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 30) {
+            El.container.classList.add('goblin-crawling');
+            
+            var crawlDuration = 1400;
+            var crawlStart = performance.now();
+            var crawlStartX = finalGoblinX;
+            var crawlStartY = finalGoblinY;
+            
+            await new Promise(function(resolve) {
+                function crawlAnimate(now) {
+                    var elapsed = now - crawlStart;
+                    var t = Math.min(elapsed / crawlDuration, 1);
+                    
+                    var cx = crawlStartX + dx * t;
+                    var cy = crawlStartY + dy * t;
+                    setGoblinPos(cx, cy);
+                    
+                    var remaining = Math.sqrt(Math.pow(endBagX - cx, 2) + Math.pow(endBagY - cy, 2));
+                    
+                    if (t < 1 && remaining > 25) {
+                        requestAnimationFrame(crawlAnimate);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(crawlAnimate);
+            });
+            
+            El.container.classList.remove('goblin-crawling');
+        }
+        
+        await sleep(300);
+        
+        // Poof - grab bag (use screen coordinates for smoke)
+        var bagRect = El.bagSprite.getBoundingClientRect();
+        createSmokePuff(bagRect.left + bagRect.width/2, bagRect.top + bagRect.height/2);
+        hideBag();
+        
+        State.isRecovering = true;
+        El.tracker.style.opacity = '0';
+        
+        await sleep(400);
+        
+        // Teleport back to start
+        setGoblinPos(areaRect.width / 2, 30);
+        
+        El.goblinNoBag.style.transform = '';
+        showGoblinWithBag();
+        
+        // Poof at return position (screen coordinates)
+        var returnRect = El.container.getBoundingClientRect();
+        createSmokePuff(returnRect.left + returnRect.width/2, returnRect.top + returnRect.height/2);
+        
+        await sleep(200);
+        
+        El.tracker.style.opacity = '1';
+        El.container.classList.add('goblin-idle');
+        
+        await sleep(300);
+        
+        State.isFalling = false;
+        State.isRecovering = false;
+        State.clickCount = 0;
+    }
+    
+    El.container.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (State.isFalling || State.isRecovering) return;
+        
+        State.clickCount++;
+        clearTimeout(State.clickTimer);
+        State.clickTimer = setTimeout(function() { State.clickCount = 0; }, 2000);
+        
+        if (State.clickCount < 6) {
+            var cls = 'goblin-wobble-' + Math.min(State.clickCount, 5);
+            El.container.classList.remove('goblin-idle', 'goblin-wobble-1', 'goblin-wobble-2', 'goblin-wobble-3', 'goblin-wobble-4', 'goblin-wobble-5', 'goblin-losing-balance');
+            void El.container.offsetWidth;
+            El.container.classList.add(cls);
+            setTimeout(function() {
+                El.container.classList.remove(cls);
+                if (!State.isFalling) El.container.classList.add('goblin-idle');
+            }, 800);
+        } else {
+            State.clickCount = 0;
+            El.container.classList.remove('goblin-idle', 'goblin-wobble-1', 'goblin-wobble-2', 'goblin-wobble-3', 'goblin-wobble-4', 'goblin-wobble-5');
+            El.container.classList.add('goblin-losing-balance');
+            setTimeout(function() {
+                El.container.classList.remove('goblin-losing-balance');
+                doFall();
+            }, 900);
+        }
+    });
+})();
+</script>
+</body>
+</html>

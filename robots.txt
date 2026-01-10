@@ -1,0 +1,29 @@
+# Blocks the Wayback Machine (Internet Archive)
+User-agent: ia_archiver
+Disallow: /
+
+# Blocks Archive.today / Archive.is
+User-agent: archive.org_bot
+Disallow: /
+
+# Blocks Common Crawl
+User-agent: CCBot
+Disallow: /
+
+# Blocks Memento / Web archives aggregator
+User-agent: MementoWeb
+Disallow: /
+
+# Blocks various other archival bots
+User-agent: ArchiveBot
+Disallow: /
+
+User-agent: Wayback
+Disallow: /
+
+# Allow all other crawlers (Google, Bing, etc.)
+User-agent: *
+Allow: /
+Allow: /images/
+
+Sitemap: https://pressforgoblins.com/sitemap.xml
